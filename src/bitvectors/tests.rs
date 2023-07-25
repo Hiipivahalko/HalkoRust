@@ -103,3 +103,12 @@ fn all_ones_first_then_back_zeros() {
         assert_eq!(bv[i], 0);
     }
 }
+
+#[test]
+fn bitvector_lenght() {
+    let n: usize = 10;
+    let bv = Bitvector::build_empty(n);
+
+    assert_eq!(bv.len(), n);
+}
+
