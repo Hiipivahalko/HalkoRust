@@ -23,9 +23,13 @@ impl Bitvector {
         //let v: Vec<u64> = Vec::new();
         Bitvector {
             data: vec![0; n],
-            n: n,
+            n,
         }
 
+    }
+
+    pub fn len(&self) -> usize {
+        self.n
     }
 
 }
