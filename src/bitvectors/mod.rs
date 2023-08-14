@@ -26,6 +26,15 @@ impl Bitvector {
 
     }
 
+    pub fn build(arr: &[u64]) -> Bitvector {
+        let mut bv = Bitvector::build_empty(arr.len());
+        for (i, v) in arr.iter().enumerate() {
+            bv.set(i, *v);
+            println!("v: {}, bv[{}]: {}", *v, i, bv.get(i));
+        }
+
+        bv
+    }
     pub fn len(&self) -> usize {
         self.n
     }
