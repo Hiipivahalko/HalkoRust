@@ -1,4 +1,3 @@
-//pub mod bitvector;
 use std::vec::Vec;
 use std::ops::{Index, IndexMut};
 
@@ -20,9 +19,8 @@ impl Bitvector {
     }
 
     pub fn build_empty(n: usize) -> Bitvector {
-        //let v: Vec<u64> = Vec::new();
         Bitvector {
-            data: vec![0; n],
+            data: vec![0; (n/64) + 1],
             n,
         }
 
@@ -30,6 +28,20 @@ impl Bitvector {
 
     pub fn len(&self) -> usize {
         self.n
+    }
+
+    pub fn get(&self, i: usize) -> u64 {
+        let one: u64 = 1;
+        (&self.data[i/64] >> (i%64)) & one
+    }
+
+    pub fn set(&mut self, i: usize, val: u32) {
+        let one: u64 = 1;
+        if val == 0 {
+            self.data[i/64] &= !(one << (i%64));
+        } else {
+           self.data[i/64] |= one << (i%64);
+        }
     }
 
 }

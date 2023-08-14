@@ -9,7 +9,7 @@ fn empty_bitvector_full_of_zeros() {
     let bv = Bitvector::build_empty(n);
 
     for i in 0..n {
-        assert_eq!(bv[i], 0);
+        assert_eq!(bv.get(i), 0);
     }
 }
 
@@ -21,7 +21,7 @@ fn empty_bitvector_full_of_zeros_rand_size() {
     let bv = Bitvector::build_empty(n);
 
     for i in 0..n {
-        assert_eq!(bv[i], 0);
+        assert_eq!(bv.get(i), 0);
     }
 }
 
@@ -32,14 +32,14 @@ fn small_bitvector_mutate() {
 
     let arr = [1, 5, 7];
     for i in 0..arr.len() {
-        bv[arr[i]] = 1;
+        bv.set(arr[i], 1);
     }
 
     for i in 0..n {
         if arr.contains(&i) {
-            assert_eq!(bv[i], 1);
+            assert_eq!(bv.get(i), 1);
         } else {
-            assert_eq!(bv[i], 0);
+            assert_eq!(bv.get(i), 0);
         }
 
     }
@@ -58,14 +58,14 @@ fn small_bitvector_mutate_random() {
     }
 
     for i in arr {
-        bv[i] = 1;
+        bv.set(i,1);
     }
 
     for i in 0..n {
         if arr.contains(&i) {
-            assert_eq!(bv[i], 1);
+            assert_eq!(bv.get(i), 1);
         } else {
-            assert_eq!(bv[i], 0);
+            assert_eq!(bv.get(i), 0);
         }
 
     }
@@ -77,11 +77,11 @@ fn all_ones() {
     let mut bv = Bitvector::build_empty(n);
 
     for i in 0..n {
-        bv[i] = 1;
+        bv.set(i,1);
     }
 
     for i in 0..n {
-        assert_eq!(bv[i], 1);
+        assert_eq!(bv.get(i), 1);
     }
 }
 
@@ -93,14 +93,20 @@ fn all_ones_first_then_back_zeros() {
     let mut bv = Bitvector::build_empty(n);
 
     for i in 0..n {
-        bv[i] = 1;
+        bv.set(i,1);
     }
     for i in 0..n {
-        bv[i] = 0;
+        bv.set(i, 0);
     }
 
     for i in 0..n {
-        assert_eq!(bv[i], 0);
+        assert_eq!(
+            bv.get(i),
+            0,
+            "\n>> Error at index: {}, value: {}\n",
+            i,
+            bv.get(i)
+        );
     }
 }
 
