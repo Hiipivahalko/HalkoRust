@@ -16,3 +16,11 @@ cargo run
 
 ```bash
 cargo build --release
+```
+
+## Docs
+
+Generate docs with following command:
+```bash
+cargo doc
+```
