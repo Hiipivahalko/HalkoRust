@@ -14,8 +14,9 @@ fn build_empty_bitvector_full_of_zeros() {
     }
 }
 
+// fn: build_empty
 #[test]
-fn empty_bitvector_full_of_zeros_rand_size() {
+fn build_empty_bitvector_full_of_zeros_rand_size() {
     let mut rng = thread_rng();
     let n: usize = rng.gen_range(200..=300);
 
@@ -97,8 +98,10 @@ fn build_from_vec_random2() {
     }
     assert_eq!(bv.len(), v.len()*64);
 }
+
+// fn: set, get
 #[test]
-fn small_bitvector_mutate() {
+fn set_get_fn_small_bitvector_mutate() {
     let n: usize = 10;
     let mut bv = Bitvector::build_empty(n);
 
@@ -117,8 +120,9 @@ fn small_bitvector_mutate() {
     }
 }
 
+// fn: set, get
 #[test]
-fn small_bitvector_mutate_random() {
+fn set_get_fn_small_bitvector_mutate_random() {
     let mut rng = thread_rng();
     let n: usize = rng.gen_range(200..=300);
     let mut bv = Bitvector::build_empty(n);
