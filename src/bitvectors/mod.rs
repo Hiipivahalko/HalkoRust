@@ -95,6 +95,13 @@ impl Bitvector {
     }
 
     /// Sets or unsets the i-th bit in the bitvector.
+    ///
+    /// ```
+    /// use halko_rust::bitvectors::Bitvector;
+    /// let mut bv = Bitvector::build_empty(5); // [0,0,0,0,0]
+    ///
+    /// bv.set(1, 1); // [0,1,0,0,0]
+    /// bv.set(1, 0); // [0,0,0,0,0]
     pub fn set(&mut self, i: usize, val: u64) {
         let one: u64 = 1;
         if val == 0 {
