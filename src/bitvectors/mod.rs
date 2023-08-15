@@ -60,6 +60,28 @@ impl Bitvector {
         bv
     }
 
+    /// Builds bitvector from vector containing positive integers.
+    /// Copies only input vector values into data variable and length
+    /// of the result bitvector is `v.len()`*64.
+    ///
+    /// ```rust
+    /// use halko_rust::bitvectors::Bitvector;
+    /// use std::vec::Vec;
+    ///
+    /// let v: Vec<u64> = vec![0,2];
+    /// let bv = Bitvector::build_from_vec(&v);
+    ///
+    /// // bv
+    /// // 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+    /// // 01000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+    /// ```
+    pub fn build_from_vec(v: &Vec<u64>) -> Bitvector {
+        Bitvector {
+            data: v.to_vec(),
+            n: v.len()*64,
+        }
+    }
+
 
     /// Return length of the bitvector (number of bits).
     pub fn len(&self) -> usize {
@@ -73,6 +95,13 @@ impl Bitvector {
     }
 
     /// Sets or unsets the i-th bit in the bitvector.
+    ///
+    /// ```
+    /// use halko_rust::bitvectors::Bitvector;
+    /// let mut bv = Bitvector::build_empty(5); // [0,0,0,0,0]
+    ///
+    /// bv.set(1, 1); // [0,1,0,0,0]
+    /// bv.set(1, 0); // [0,0,0,0,0]
     pub fn set(&mut self, i: usize, val: u64) {
         let one: u64 = 1;
         if val == 0 {
@@ -82,6 +111,21 @@ impl Bitvector {
         }
     }
 
+    /// Returns numbers of 1s in the bitvector in range [0,i].
+    pub fn rank1(&self, i: usize) -> u64 {
+        if i >= self.n {
+            panic!("Rank query out of the bitvector range -> i:{}, length of bitvector:{}", i, self.n);
+        }
+
+        let mut ones = 0;
+        for k in 0..i+1 {
+            if self.get(k) == 1 {
+                ones += 1;
+            }
+        }
+
+        ones
+    }
 }
 
 impl Index<usize> for Bitvector {
