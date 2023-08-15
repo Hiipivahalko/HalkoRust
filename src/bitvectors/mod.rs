@@ -60,6 +60,28 @@ impl Bitvector {
         bv
     }
 
+    /// Builds bitvector from vector containing positive integers.
+    /// Copies only input vector values into data variable and length
+    /// of the result bitvector is `v.len()`*64.
+    ///
+    /// ```rust
+    /// use halko_rust::bitvectors::Bitvector;
+    /// use std::vec::Vec;
+    ///
+    /// let v: Vec<u64> = vec![0,2];
+    /// let bv = Bitvector::build_from_vec(&v);
+    ///
+    /// // bv
+    /// // 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+    /// // 01000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+    /// ```
+    pub fn build_from_vec(v: &Vec<u64>) -> Bitvector {
+        Bitvector {
+            data: v.to_vec(),
+            n: v.len()*64,
+        }
+    }
+
 
     /// Return length of the bitvector (number of bits).
     pub fn len(&self) -> usize {

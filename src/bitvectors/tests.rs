@@ -1,9 +1,10 @@
 use rand::{Rng, thread_rng};
-//use rand::seq::index;
+use std::vec::Vec;
 use crate::bitvectors::Bitvector;
 
+// fn: build_empty
 #[test]
-fn empty_bitvector_full_of_zeros() {
+fn build_empty_bitvector_full_of_zeros() {
     let n: usize = 10;
 
     let bv = Bitvector::build_empty(n);
@@ -25,6 +26,77 @@ fn empty_bitvector_full_of_zeros_rand_size() {
     }
 }
 
+// fn: build_from_vec
+#[test]
+fn build_from_vec_zeros() {
+    let v: Vec<u64> = vec![0,0,0];
+    let bv = Bitvector::build_from_vec(&v);
+
+    for i in 0..bv.len() {
+        assert_eq!(0, bv.get(i));
+    }
+    assert_eq!(bv.len(), 3*64);
+}
+//
+// fn: build_from_vec
+#[test]
+fn build_from_vec_ones() {
+    let v: Vec<u64> = vec![u64::MAX,u64::MAX,u64::MAX];
+    let bv = Bitvector::build_from_vec(&v);
+
+    for i in 0..bv.len() {
+        assert_eq!(1, bv.get(i));
+    }
+    assert_eq!(bv.len(), 3*64);
+}
+
+// fn: build_from_vec
+#[test]
+fn build_from_vec_small() {
+    let v: Vec<u64> = vec![0,3920,234,940,1,4345,0,2,12324];
+    let bv = Bitvector::build_from_vec(&v);
+
+    for i in 0..v.len() {
+        assert_eq!(bv[i], v[i]);
+    }
+    for i in 0..64 {
+        assert_eq!(bv.get(i), 0);
+    }
+    for i in 64*6..64*7 {
+        assert_eq!(bv.get(i), 0);
+    }
+    assert_eq!(bv.get(4*64), 1);
+    assert_eq!(bv.get(7*64+1), 1);
+    assert_eq!(bv.len(), v.len()*64);
+}
+
+// fn: build_from_vec
+#[test]
+fn build_from_vec_random1() {
+    let mut rng = thread_rng();
+    let n: usize = rng.gen_range(2000..=3000);
+    let v: Vec<u64> = (0..n).map(|_| rng.gen_range(0..u64::MAX)).collect();
+    let bv = Bitvector::build_from_vec(&v);
+
+    for i in 0..v.len() {
+        assert_eq!(bv[i], v[i]);
+    }
+    assert_eq!(bv.len(), v.len()*64);
+}
+
+// fn: build_from_vec
+#[test]
+fn build_from_vec_random2() {
+    let mut rng = thread_rng();
+    let n: usize = rng.gen_range(5000..=6000);
+    let v: Vec<u64> = (0..n).map(|_| rng.gen_range(0..u64::MAX)).collect();
+    let bv = Bitvector::build_from_vec(&v);
+
+    for i in 0..v.len() {
+        assert_eq!(bv[i], v[i]);
+    }
+    assert_eq!(bv.len(), v.len()*64);
+}
 #[test]
 fn small_bitvector_mutate() {
     let n: usize = 10;
