@@ -111,6 +111,21 @@ impl Bitvector {
         }
     }
 
+    /// Returns numbers of 1s in the bitvector in range [0,i].
+    pub fn rank1(&self, i: usize) -> u64 {
+        if i >= self.n {
+            panic!("Rank query out of the bitvector range -> i:{}, length of bitvector:{}", i, self.n);
+        }
+
+        let mut ones = 0;
+        for k in 0..i+1 {
+            if self.get(k) == 1 {
+                ones += 1;
+            }
+        }
+
+        ones
+    }
 }
 
 impl Index<usize> for Bitvector {
