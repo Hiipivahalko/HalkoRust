@@ -99,6 +99,67 @@ fn build_from_vec_random2() {
     assert_eq!(bv.len(), v.len()*64);
 }
 
+// fn: build
+#[test]
+fn build_bitvector_from_array1() {
+    let a: [u64; 7] = [0,1,0,0,1,1,0];
+    let bv = Bitvector::build(&a);
+
+    for i in 0..a.len() {
+        assert_eq!(
+            bv.get(i),
+            a[i],
+            "\n>> Error at index: {},\nbv: {},\na: {}\n",
+            i,
+            bv.get(i),
+            a[i]
+        );
+    }
+}
+
+// fn: build
+#[test]
+fn build_bitvector_from_array2() {
+    let a: [u64; 5] = [1,1,1,1,1];
+    let bv = Bitvector::build(&a);
+
+    for i in 0..a.len() {
+        assert_eq!(
+            bv.get(i),
+            a[i],
+            "\n>> Error at index: {},\nbv: {},\na: {}\n",
+            i,
+            bv.get(i),
+            a[i]
+        );
+    }
+}
+
+// fn: build
+#[test]
+fn build_bitvector_from_array_random() {
+    let mut rng = thread_rng();
+
+    const N: usize = 300;
+    let mut a: [u64; N] = [0; N];
+    for _i in 0..75 {
+        let x: usize = rng.gen_range(0..N);
+        a[x] = 1;
+    }
+    let bv = Bitvector::build(&a);
+
+    for i in 0..a.len() {
+        assert_eq!(
+            bv.get(i),
+            a[i],
+            "\n>> Error at index: {},\nbv: {},\na: {}\n",
+            i,
+            bv.get(i),
+            a[i]
+        );
+    }
+}
+
 // fn: set, get
 #[test]
 fn set_get_fn_small_bitvector_mutate() {
@@ -147,6 +208,7 @@ fn set_get_fn_small_bitvector_mutate_random() {
     }
 }
 
+// fn: set, get
 #[test]
 fn all_ones() {
     let n: usize = 10;
@@ -161,6 +223,8 @@ fn all_ones() {
     }
 }
 
+// fn: set, get
+//
 // first change all 0s -> 1
 // then change all 1s -> 0
 #[test]
@@ -186,70 +250,13 @@ fn all_ones_first_then_back_zeros() {
     }
 }
 
+// fn: len
 #[test]
 fn bitvector_lenght() {
     let n: usize = 10;
     let bv = Bitvector::build_empty(n);
 
     assert_eq!(bv.len(), n);
-}
-
-#[test]
-fn build_bitvector_from_array1() {
-    let a: [u64; 7] = [0,1,0,0,1,1,0];
-    let bv = Bitvector::build(&a);
-
-    for i in 0..a.len() {
-        assert_eq!(
-            bv.get(i),
-            a[i],
-            "\n>> Error at index: {},\nbv: {},\na: {}\n",
-            i,
-            bv.get(i),
-            a[i]
-        );
-    }
-}
-
-#[test]
-fn build_bitvector_from_array2() {
-    let a: [u64; 5] = [1,1,1,1,1];
-    let bv = Bitvector::build(&a);
-
-    for i in 0..a.len() {
-        assert_eq!(
-            bv.get(i),
-            a[i],
-            "\n>> Error at index: {},\nbv: {},\na: {}\n",
-            i,
-            bv.get(i),
-            a[i]
-        );
-    }
-}
-
-#[test]
-fn build_bitvector_from_array_random() {
-    let mut rng = thread_rng();
-
-    const N: usize = 300;
-    let mut a: [u64; N] = [0; N];
-    for _i in 0..75 {
-        let x: usize = rng.gen_range(0..N);
-        a[x] = 1;
-    }
-    let bv = Bitvector::build(&a);
-
-    for i in 0..a.len() {
-        assert_eq!(
-            bv.get(i),
-            a[i],
-            "\n>> Error at index: {},\nbv: {},\na: {}\n",
-            i,
-            bv.get(i),
-            a[i]
-        );
-    }
 }
 
 // fn: rank1
