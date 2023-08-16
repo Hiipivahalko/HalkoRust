@@ -165,6 +165,50 @@ impl Bitvector {
 
         m_i + ones_in_block
     }
+
+    /// Returns index of `i`-th 1bit in the bitvector.
+    /// Function panics if `i>m`, where `m` is number of ones in the bitvector.
+    ///
+    /// ```rust
+    /// use std::panic;
+    /// use halko_rust::bitvectors::Bitvector;
+    ///
+    /// let a: [u64; 7] = [0,1,0,0,1,1,0];
+    /// let bv = Bitvector::build(&a);
+    ///
+    /// assert_eq!(bv.select1(1), 1);
+    /// assert_eq!(bv.select1(2), 4);
+    /// assert_eq!(bv.select1(3), 5);
+    ///
+    /// let panic_result = panic::catch_unwind(|| {
+    ///     bv.select1(4)
+    /// });
+    /// assert!(panic_result.is_err());
+    /// ```
+    pub fn select1(&self, i: usize) -> usize {
+        if i > self.n {
+            panic!("Select query out of the bitvector range -> i:{}, length of bitvector:{}", i, self.n);
+        }
+
+        if i == 0 {
+            panic!("Input value i must be greater than 0 (zero). There is not 0th 1bit in the bitvector");
+        }
+
+        let mut ones = 0;
+
+        for k in 0..self.n {
+            if self.get(k) == 1 {
+                ones += 1;
+            }
+
+            if ones == i {
+                return k;
+            }
+        }
+
+        panic!(">> Error, bitvector do not have {}th bit ->
+               numbers of 1s in the bitvector is less than {}", i,i,);
+    }
 }
 
 impl Index<usize> for Bitvector {
