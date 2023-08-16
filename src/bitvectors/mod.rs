@@ -80,7 +80,7 @@ impl Bitvector {
     /// Copies only input vector values into data variable and length
     /// of the result bitvector is `v.len()`*64.
     ///
-    /// ```rust
+    /// ```
     /// use halko_rust::bitvectors::Bitvector;
     /// use std::vec::Vec;
     ///
@@ -101,7 +101,7 @@ impl Bitvector {
 
     /// Return length of the bitvector (number of bits).
     ///
-    /// ```rust
+    /// ```
     /// use halko_rust::bitvectors::Bitvector;
     ///
     /// let bv1 = Bitvector::build_empty(5);
@@ -135,9 +135,9 @@ impl Bitvector {
         }
     }
 
-    /// Returns numbers of 1s in the bitvector in range [0,i].
+    /// Returns numbers of 1s in the bitvector in range `[0,i]`.
     ///
-    /// ```rust
+    /// ```
     /// use std::panic;
     /// use halko_rust::bitvectors::Bitvector;
     ///
@@ -169,7 +169,7 @@ impl Bitvector {
     /// Returns index of `i`-th 1bit in the bitvector.
     /// Function panics if `i>m`, where `m` is number of ones in the bitvector.
     ///
-    /// ```rust
+    /// ```
     /// use std::panic;
     /// use halko_rust::bitvectors::Bitvector;
     ///
@@ -214,7 +214,7 @@ impl Bitvector {
 impl Index<usize> for Bitvector {
     type Output = u64;
 
-    /// ```rust
+    /// ```
     /// use halko_rust::bitvectors::Bitvector;
     /// use std::vec::Vec;
     ///
@@ -230,7 +230,7 @@ impl Index<usize> for Bitvector {
 }
 
 impl IndexMut<usize> for Bitvector {
-    /// ```rust
+    /// ```
     /// use halko_rust::bitvectors::Bitvector;
     /// use std::vec::Vec;
     ///
