@@ -54,7 +54,6 @@ impl Bitvector {
         let mut bv = Bitvector::build_empty(arr.len());
         for (i, v) in arr.iter().enumerate() {
             bv.set(i, *v);
-            println!("v: {}, bv[{}]: {}", *v, i, bv.get(i));
         }
 
         bv
@@ -117,14 +116,11 @@ impl Bitvector {
             panic!("Rank query out of the bitvector range -> i:{}, length of bitvector:{}", i, self.n);
         }
 
-        let mut ones = 0;
-        for k in 0..i+1 {
-            if self.get(k) == 1 {
-                ones += 1;
-            }
-        }
+        let ones_in_block = (self.data[i/64] << (64 - (i%64)-1)).count_ones() as u64;
+        // ones in range [0,i-1]
+        let m_i = self.data[0..(i/64)].iter().fold(0, |acc, x| (acc + x.count_ones() as u64));
 
-        ones
+        m_i + ones_in_block
     }
 }
 
