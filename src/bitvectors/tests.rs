@@ -299,12 +299,13 @@ fn rank1_ones() {
 
     for i in 0..bv.len() {
         let j = i as u64;
+        let rank1 = bv.rank1(i);
         assert_eq!(
-            bv.rank1(i),
+            rank1,
             j+1,
             "\n>> Error at index: {},\nrank1(i,bv): {},\ncorrect: {}\n",
             i,
-            bv.rank1(i),
+            rank1,
             j+1
         );
     }
