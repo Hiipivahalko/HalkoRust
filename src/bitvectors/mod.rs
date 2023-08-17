@@ -161,7 +161,7 @@ impl Bitvector {
 
         let ones_in_block = (self.data[i/64] << (64 - (i%64)-1)).count_ones() as u64;
         // ones in range [0,i-1]
-        let m_i = self.data[0..(i/64)].iter().fold(0, |acc, x| (acc + x.count_ones() as u64));
+        let m_i = self.data[0..(i/64)].iter().fold(0, |acc, &x| (acc + x.count_ones() as u64));
 
         m_i + ones_in_block
     }
@@ -194,16 +194,25 @@ impl Bitvector {
             panic!("Input value i must be greater than 0 (zero). There is not 0th 1bit in the bitvector");
         }
 
-        let mut ones = 0;
+        let mut indicies_before_select_i: usize = 0;
+        // idea: loop first blocks until limit found and then final block
+        for (k, x) in self.data.iter().enumerate() {
+            println!("indicies_before_select_i:{}", indicies_before_select_i);
+            let ones_in_x = x.count_ones() as usize;
+            if indicies_before_select_i + ones_in_x >= i {
+                for j in 0..64 { // loop final block in self.data
+                    if self.get(j+(k*64)) == 1 {
+                        indicies_before_select_i += 1;
+                    }
 
-        for k in 0..self.n {
-            if self.get(k) == 1 {
-                ones += 1;
+                    if indicies_before_select_i == i {
+                        println!("k:{}, j:{}", k,j);
+                        return k*64 + j;
+                    }
+                }
+                panic!("Something went wrong when computing the select value, select1 function have error!");
             }
-
-            if ones == i {
-                return k;
-            }
+            indicies_before_select_i += ones_in_x;
         }
 
         panic!(">> Error, bitvector do not have {}th bit ->
