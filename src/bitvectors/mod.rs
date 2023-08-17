@@ -166,6 +166,29 @@ impl Bitvector {
         m_i + ones_in_block
     }
 
+    /// Returns numbers of 0s in the bitvector in range `[0,i]`.
+    ///
+    /// ```
+    /// use std::panic;
+    /// use halko_rust::bitvectors::Bitvector;
+    ///
+    /// let a: [u64; 7] = [0,1,0,0,1,1,0];
+    /// let bv = Bitvector::build(&a);
+    ///
+    /// assert_eq!(bv.rank0(0), 1);
+    /// assert_eq!(bv.rank0(1), 1);
+    /// assert_eq!(bv.rank0(2), 2);
+    /// assert_eq!(bv.rank0(6), 4);
+    ///
+    /// let panic_result = panic::catch_unwind(|| {
+    ///     bv.rank1(7)
+    /// });
+    /// assert!(panic_result.is_err());
+    /// ```
+    pub fn rank0(&self, i: usize) -> u64 {
+        (i as u64+1) - self.rank1(i)
+    }
+
     /// Returns index of `i`-th 1bit in the bitvector.
     /// Function panics if `i>m`, where `m` is number of ones in the bitvector.
     ///

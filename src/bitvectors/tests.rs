@@ -380,6 +380,125 @@ fn rank1_random2() {
     }
 }
 
+// fn: rank0
+#[test]
+fn rank0_simple() {
+    let a: [u64; 7] = [0,1,0,0,1,1,0];
+    let bv = Bitvector::build(&a);
+
+    let result: [u64; 7] = [1,1,2,3,3,3,4];
+
+    for i in 0..7 {
+        assert_eq!(
+            bv.rank0(i),
+            result[i],
+            "\n>> Error at index: {},\nrank0(i,bv): {},\ncorrect: {}\n",
+            i,
+            bv.rank0(i),
+            result[i]
+        );
+    }
+}
+
+// fn: rank0
+#[test]
+fn rank0_zeros() {
+    let bv = Bitvector::build_empty(300);
+
+    for i in 0..bv.len() {
+        let j = i as u64;
+        assert_eq!(
+            bv.rank0(i),
+            j+1,
+            "\n>> Error at index: {},\nrank0(i,bv): {},\ncorrect: {}\n",
+            i,
+            bv.rank0(i),
+            j+1
+        );
+    }
+}
+
+// fn: rank0
+#[test]
+fn rank0_ones() {
+    let mut bv = Bitvector::build_empty(300);
+    for i in 0..bv.len() {
+        bv.set(i, 1);
+    }
+
+    for i in 0..bv.len() {
+        let rank0 = bv.rank0(i);
+        assert_eq!(
+            rank0,
+            0,
+            "\n>> Error at index: {},\nrank0(i,bv): {},\ncorrect: {}\n",
+            i,
+            rank0,
+            0
+        );
+    }
+}
+
+// fn: rank0
+#[test]
+fn rank0_random1() {
+    let mut rng = thread_rng();
+    let n: usize = rng.gen_range(10..=20);
+    let v: Vec<u64> = (0..n).map(|_| rng.gen_range(0..u64::MAX)).collect();
+    let bv = Bitvector::build_from_vec(&v);
+
+    let mut result: Vec<u64> = vec![0; n*64];
+    let mut zeros = 0;
+    assert_eq!(bv.len(), result.len());
+    for k in 0..bv.len() {
+        if bv.get(k) == 0 {
+            zeros += 1;
+        }
+        result[k] = zeros;
+    }
+
+    for k in 0..bv.len() {
+        assert_eq!(
+            bv.rank0(k),
+            result[k],
+            "\n>> Error at index: {},\nrank0(i,bv): {},\ncorrect: {}\n",
+            k,
+            bv.rank0(k),
+            result[k]
+        );
+    }
+}
+
+// fn: rank0
+#[test]
+fn rank0_random2() {
+    let mut rng = thread_rng();
+    let n: usize = rng.gen_range(50..=60);
+    let v: Vec<u64> = (0..n).map(|_| rng.gen_range(0..u64::MAX)).collect();
+    let bv = Bitvector::build_from_vec(&v);
+
+    let mut result: Vec<u64> = vec![0; n*64];
+    let mut zeros = 0;
+    assert_eq!(bv.len(), result.len());
+    for k in 0..bv.len() {
+        if bv.get(k) == 0 {
+            zeros += 1;
+        }
+        result[k] = zeros;
+    }
+
+    for k in 0..bv.len() {
+        assert_eq!(
+            bv.rank0(k),
+            result[k],
+            "\n>> Error at index: {},\nrank0(i,bv): {},\ncorrect: {}\n",
+            k,
+            bv.rank0(k),
+            result[k]
+        );
+    }
+}
+
 // fn: select1
 #[test]
 fn select1_simple() {
