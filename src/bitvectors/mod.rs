@@ -223,6 +223,12 @@ impl Bitvector {
             let ones_in_x = x.count_ones() as usize;
             if indicies_before_select_i + ones_in_x >= i {
                 for j in 0..64 { // loop final block in self.data
+                    // this applies only for the last block in self.data
+                    // when last block contains redudant bits (n%64 != 0)
+                    if j + (k*64) >= self.n {
+                        break;
+                    }
+
                     if self.get(j+(k*64)) == 1 {
                         indicies_before_select_i += 1;
                     }
