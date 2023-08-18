@@ -2,7 +2,7 @@ use std::panic;
 use std::vec::Vec;
 use rand::{Rng, thread_rng};
 
-use crate::bitvectors::Bitvector;
+use crate::bitvectors::{Bitvector, BitValue};
 
 // fn: build_empty
 #[test]
@@ -104,7 +104,7 @@ fn build_from_vec_random2() {
 // fn: build
 #[test]
 fn build_bitvector_from_array1() {
-    let a: [u64; 7] = [0,1,0,0,1,1,0];
+    let a: [u32; 7] = [0,1,0,0,1,1,0];
     let bv = Bitvector::build(&a);
 
     for i in 0..a.len() {
@@ -122,7 +122,7 @@ fn build_bitvector_from_array1() {
 // fn: build
 #[test]
 fn build_bitvector_from_array2() {
-    let a: [u64; 5] = [1,1,1,1,1];
+    let a: [u32; 5] = [1,1,1,1,1];
     let bv = Bitvector::build(&a);
 
     for i in 0..a.len() {
@@ -143,7 +143,7 @@ fn build_bitvector_from_array_random() {
     let mut rng = thread_rng();
 
     const N: usize = 300;
-    let mut a: [u64; N] = [0; N];
+    let mut a: [u32; N] = [0; N];
     for _i in 0..75 {
         let x: usize = rng.gen_range(0..N);
         a[x] = 1;
@@ -170,7 +170,7 @@ fn set_get_fn_small_bitvector_mutate() {
 
     let arr = [1, 5, 7];
     for i in 0..arr.len() {
-        bv.set(arr[i], 1);
+        bv.set(arr[i], BitValue::ONE);
     }
 
     for i in 0..n {
@@ -197,7 +197,7 @@ fn set_get_fn_small_bitvector_mutate_random() {
     }
 
     for i in arr {
-        bv.set(i,1);
+        bv.set(i, BitValue::ONE);
     }
 
     for i in 0..n {
@@ -217,7 +217,7 @@ fn all_ones() {
     let mut bv = Bitvector::build_empty(n);
 
     for i in 0..n {
-        bv.set(i,1);
+        bv.set(i, BitValue::ONE);
     }
 
     for i in 0..n {
@@ -235,10 +235,10 @@ fn all_ones_first_then_back_zeros() {
     let mut bv = Bitvector::build_empty(n);
 
     for i in 0..n {
-        bv.set(i,1);
+        bv.set(i, BitValue::ONE);
     }
     for i in 0..n {
-        bv.set(i, 0);
+        bv.set(i, BitValue::ZERO);
     }
 
     for i in 0..n {
@@ -264,7 +264,7 @@ fn bitvector_lenght() {
 // fn: rank1
 #[test]
 fn rank1_simple() {
-    let a: [u64; 7] = [0,1,0,0,1,1,0];
+    let a: [u32; 7] = [0,1,0,0,1,1,0];
     let bv = Bitvector::build(&a);
 
     let result: [u64; 7] = [0,1,1,1,2,3,3];
@@ -303,7 +303,7 @@ fn rank1_zeros() {
 fn rank1_ones() {
     let mut bv = Bitvector::build_empty(300);
     for i in 0..bv.len() {
-        bv.set(i, 1);
+        bv.set(i, BitValue::ONE);
     }
 
     for i in 0..bv.len() {
@@ -383,7 +383,7 @@ fn rank1_random2() {
 // fn: rank0
 #[test]
 fn rank0_simple() {
-    let a: [u64; 7] = [0,1,0,0,1,1,0];
+    let a: [u32; 7] = [0,1,0,0,1,1,0];
     let bv = Bitvector::build(&a);
 
     let result: [u64; 7] = [1,1,2,3,3,3,4];
@@ -423,7 +423,7 @@ fn rank0_zeros() {
 fn rank0_ones() {
     let mut bv = Bitvector::build_empty(300);
     for i in 0..bv.len() {
-        bv.set(i, 1);
+        bv.set(i, BitValue::ONE);
     }
 
     for i in 0..bv.len() {
@@ -502,7 +502,7 @@ fn rank0_random2() {
 // fn: select1
 #[test]
 fn select1_simple() {
-    let a: [u64; 7] = [0,1,0,0,1,1,0];
+    let a: [u32; 7] = [0,1,0,0,1,1,0];
     let bv = Bitvector::build(&a);
 
     let result: [usize; 4] = [usize::MAX, 1, 4, 5];
@@ -524,7 +524,7 @@ fn select1_simple() {
 #[test]
 #[should_panic]
 fn select1_zeros() {
-    let a: [u64; 7] = [0,0,0,0,0,0,0];
+    let a: [u32; 7] = [0,0,0,0,0,0,0];
     let bv = Bitvector::build(&a);
 
     let _result = bv.select1(2);
@@ -534,7 +534,7 @@ fn select1_zeros() {
 #[test]
 #[should_panic]
 fn select1_zeroth_1bit() {
-    let a: [u64; 7] = [0,0,0,0,0,0,0];
+    let a: [u32; 7] = [0,0,0,0,0,0,0];
     let bv = Bitvector::build(&a);
 
     let _result = bv.select1(0);
@@ -544,7 +544,7 @@ fn select1_zeroth_1bit() {
 #[test]
 #[should_panic]
 fn select1_over_nth_1bit() {
-    let a: [u64; 7] = [0,0,0,0,0,0,0];
+    let a: [u32; 7] = [0,0,0,0,0,0,0];
     let bv = Bitvector::build(&a);
 
     let _result = bv.select1(8);
@@ -648,7 +648,7 @@ fn select1_random2() {
 // fn: select0
 #[test]
 fn select0_simple() {
-    let a: [u64; 7] = [0,1,0,0,1,1,0];
+    let a: [u32; 7] = [0,1,0,0,1,1,0];
     let bv = Bitvector::build(&a);
 
     let result: [usize; 5] = [usize::MAX, 0, 2, 3, 6];
@@ -670,7 +670,7 @@ fn select0_simple() {
 #[test]
 #[should_panic]
 fn select0_ones() {
-    let a: [u64; 7] = [1,1,1,1,1,1,1];
+    let a: [u32; 7] = [1,1,1,1,1,1,1];
     let bv = Bitvector::build(&a);
 
     let _result = bv.select0(2);
@@ -680,7 +680,7 @@ fn select0_ones() {
 #[test]
 #[should_panic]
 fn select0_zeroth_0bit() {
-    let a: [u64; 7] = [1,1,1,1,1,1,1];
+    let a: [u32; 7] = [1,1,1,1,1,1,1];
     let bv = Bitvector::build(&a);
 
     let _result = bv.select0(0);
@@ -690,7 +690,7 @@ fn select0_zeroth_0bit() {
 #[test]
 #[should_panic]
 fn select0_over_nth_1bit() {
-    let a: [u64; 7] = [1,1,1,1,1,1,1];
+    let a: [u32; 7] = [1,1,1,1,1,1,1];
     let bv = Bitvector::build(&a);
 
     let _result = bv.select0(8);

@@ -4,23 +4,37 @@ use std::ops::{Index, IndexMut};
 #[cfg(test)]
 mod tests;
 
+pub enum BitValue {
+    ZERO,
+    ONE,
+}
+
+impl BitValue {
+    pub fn value(&self) -> u32 {
+        match *self {
+           BitValue::ZERO => 0,
+           BitValue::ONE => 1,
+        }
+    }
+}
+
 /// Simple bitvector implementation.
 /// Use struct's build-functions to building/initializing Bitvector
 ///
 /// # Example
 ///
 /// ```
-/// use halko_rust::bitvectors::Bitvector;
+/// use halko_rust::bitvectors::{Bitvector, BitValue};
 ///
 /// // [0,0,0,0,0]
 /// let mut bv = Bitvector::build_empty(5);
 ///
 /// for i in 0..5 { assert_eq!(0, bv.get(i)); }
 ///
-/// bv.set(0, 1); // bv = [1,0,0,0,0];
+/// bv.set(0, BitValue::ONE); // bv = [1,0,0,0,0];
 /// assert_eq!(bv.get(0), 1);
 ///
-/// bv.set(3, 1); // bv = [1,0,0,1,0];
+/// bv.set(3, BitValue::ONE); // bv = [1,0,0,1,0];
 /// assert_eq!(bv.get(3), 1);
 /// ```
 ///
@@ -28,7 +42,7 @@ mod tests;
 /// ```
 /// use halko_rust::bitvectors::Bitvector;
 ///
-/// let a: [u64; 7] = [0,1,0,0,1,1,0];
+/// let a: [u32; 7] = [0,1,0,0,1,1,0];
 /// let bv = Bitvector::build(&a);
 ///
 /// for i in 0..a.len() { assert_eq!(a[i], bv.get(i)); }
@@ -62,15 +76,19 @@ impl Bitvector {
     /// ```
     /// use halko_rust::bitvectors::Bitvector;
     ///
-    /// let a: [u64; 7] = [0,1,0,0,1,1,0];
+    /// let a: [u32; 7] = [0,1,0,0,1,1,0];
     /// let bv = Bitvector::build(&a);
     ///
     /// for i in 0..a.len() { assert_eq!(a[i], bv.get(i)); }
     /// ```
-    pub fn build(arr: &[u64]) -> Bitvector {
+    pub fn build(arr: &[u32]) -> Bitvector {
         let mut bv = Bitvector::build_empty(arr.len());
         for (i, v) in arr.iter().enumerate() {
-            bv.set(i, *v);
+            match v {
+                0 => bv.set(i, BitValue::ZERO),
+                _ => bv.set(i, BitValue::ONE)
+
+            }
         }
 
         bv
@@ -112,26 +130,25 @@ impl Bitvector {
     }
 
     /// Returns bit value in the i-th bit.
-    pub fn get(&self, i: usize) -> u64 {
-        let one: u64 = 1;
-        (&self.data[i/64] >> (i%64)) & one
+    pub fn get(&self, i: usize) -> u32 {
+        const I: u32 = 1;
+        (&self.data[i/64] >> (i%64)) as u32 & I
     }
 
     /// Sets or unsets the i-th bit in the bitvector.
     ///
     /// ```
-    /// use halko_rust::bitvectors::Bitvector;
+    /// use halko_rust::bitvectors::{Bitvector, BitValue};
     /// let mut bv = Bitvector::build_empty(5); // [0,0,0,0,0]
     ///
-    /// bv.set(1, 1); // [0,1,0,0,0]
-    /// bv.set(1, 0); // [0,0,0,0,0]
+    /// bv.set(1, BitValue::ONE); // [0,1,0,0,0]
+    /// bv.set(1, BitValue::ZERO); // [0,0,0,0,0]
     /// ```
-    pub fn set(&mut self, i: usize, val: u64) {
-        let one: u64 = 1;
-        if val == 0 {
-            self.data[i/64] &= !(one << (i%64));
-        } else {
-           self.data[i/64] |= one << (i%64);
+    pub fn set(&mut self, i: usize, val: BitValue) {
+        const I: u64 = 1;
+        match val {
+            BitValue::ZERO => self.data[i/64] &= !(I << (i%64)),
+            BitValue::ONE => self.data[i/64] |= I << (i%64),
         }
     }
 
@@ -141,7 +158,7 @@ impl Bitvector {
     /// use std::panic;
     /// use halko_rust::bitvectors::Bitvector;
     ///
-    /// let a: [u64; 7] = [0,1,0,0,1,1,0];
+    /// let a: [u32; 7] = [0,1,0,0,1,1,0];
     /// let bv = Bitvector::build(&a);
     ///
     /// assert_eq!(bv.rank1(0), 0);
@@ -172,7 +189,7 @@ impl Bitvector {
     /// use std::panic;
     /// use halko_rust::bitvectors::Bitvector;
     ///
-    /// let a: [u64; 7] = [0,1,0,0,1,1,0];
+    /// let a: [u32; 7] = [0,1,0,0,1,1,0];
     /// let bv = Bitvector::build(&a);
     ///
     /// assert_eq!(bv.rank0(0), 1);
@@ -196,7 +213,7 @@ impl Bitvector {
     /// use std::panic;
     /// use halko_rust::bitvectors::Bitvector;
     ///
-    /// let a: [u64; 7] = [0,1,0,0,1,1,0];
+    /// let a: [u32; 7] = [0,1,0,0,1,1,0];
     /// let bv = Bitvector::build(&a);
     ///
     /// assert_eq!(bv.select1(1), 1);
@@ -253,7 +270,7 @@ impl Bitvector {
     /// use std::panic;
     /// use halko_rust::bitvectors::Bitvector;
     ///
-    /// let a: [u64; 7] = [0,1,0,0,1,1,0];
+    /// let a: [u32; 7] = [0,1,0,0,1,1,0];
     /// let bv = Bitvector::build(&a);
     ///
     /// assert_eq!(bv.select0(1), 0);
