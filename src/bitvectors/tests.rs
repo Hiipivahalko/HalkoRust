@@ -644,3 +644,149 @@ fn select1_random2() {
         assert_eq!(bv.select1(i), results[i]);
     }
 }
+
+// fn: select0
+#[test]
+fn select0_simple() {
+    let a: [u64; 7] = [0,1,0,0,1,1,0];
+    let bv = Bitvector::build(&a);
+
+    let result: [usize; 5] = [usize::MAX, 0, 2, 3, 6];
+
+    for i in 1..result.len() {
+        let select1 = bv.select0(i);
+        assert_eq!(
+            select1,
+            result[i],
+            "\n>> Error at {}-th 0bit,\nselect0({},bv): {},\ncorrect: {}\n",
+            i,i,
+            select1,
+            result[i]
+        );
+    }
+}
+
+// fn: select0
+#[test]
+#[should_panic]
+fn select0_ones() {
+    let a: [u64; 7] = [1,1,1,1,1,1,1];
+    let bv = Bitvector::build(&a);
+
+    let _result = bv.select0(2);
+}
+
+// fn: select0
+#[test]
+#[should_panic]
+fn select0_zeroth_0bit() {
+    let a: [u64; 7] = [1,1,1,1,1,1,1];
+    let bv = Bitvector::build(&a);
+
+    let _result = bv.select0(0);
+}
+
+// fn: select0
+#[test]
+#[should_panic]
+fn select0_over_nth_1bit() {
+    let a: [u64; 7] = [1,1,1,1,1,1,1];
+    let bv = Bitvector::build(&a);
+
+    let _result = bv.select0(8);
+}
+
+
+// fn: select0
+#[test]
+fn select0_bitvector_all_zeros() {
+    let v = vec![0, 0, 0];
+    let bv = Bitvector::build_from_vec(&v);
+
+    for i in 1..=bv.len() {
+        let select1 = bv.select0(i);
+        assert_eq!(
+            select1,
+            i-1,
+            "\n>> Error at {}-th 0bit,\nselect0({},bv): {},\ncorrect: {}\n",
+            i,i,
+            select1,
+            i-1
+        );
+    }
+}
+
+// fn: select0
+#[test]
+fn select0_small() {
+    let v = vec![u64::MAX, 0, u64::MAX, 0xFFFFFFFFFFFFFFFD, u64::MAX];
+    let bv = Bitvector::build_from_vec(&v);
+
+    for i in 1..=64 {
+        let select0 = bv.select0(i);
+        let result = i-1+64;
+        assert_eq!(
+            select0,
+            result,
+            "\n>> Error at {}-th 0bit,\nselect0({},bv): {},\ncorrect: {}\n",
+            i,i,
+            select0,
+            result
+        );
+    }
+
+    // value 0xFFFFFFFFFFFFFFFD set this bit on in the input vector
+    assert_eq!(bv.select0(65), (3*64)-1+2);
+
+    // checking there are no more 1s
+    let no_more_ones = panic::catch_unwind(|| {
+        bv.select0(66)
+    });
+    assert!(no_more_ones.is_err());
+}
+
+// fn: select0
+#[test]
+fn select0_random1() {
+    let mut rng = thread_rng();
+    let n: usize = rng.gen_range(30..=40);
+    let v: Vec<u64> = (0..n).map(|_| rng.gen_range(0..=u64::MAX)).collect();
+    let bv = Bitvector::build_from_vec(&v);
+
+    let mut results: Vec<usize> = vec![0];
+
+    // finding solutions
+    for i in 0..bv.len() {
+        if bv.get(i) == 0 {
+            results.push(i);
+        }
+    }
+
+
+    for i in 1..results.len() {
+        assert_eq!(bv.select0(i), results[i]);
+    }
+}
+
+// fn: select0
+#[test]
+fn select0_random2() {
+    let mut rng = thread_rng();
+    let n: usize = rng.gen_range(50..=60);
+    let v: Vec<u64> = (0..n).map(|_| rng.gen_range(0..=u64::MAX)).collect();
+    let bv = Bitvector::build_from_vec(&v);
+
+    let mut results: Vec<usize> = vec![0];
+
+    // finding solutions
+    for i in 0..bv.len() {
+        if bv.get(i) == 0 {
+            results.push(i);
+        }
+    }
+
+
+    for i in 1..results.len() {
+        assert_eq!(bv.select0(i), results[i]);
+    }
+}
