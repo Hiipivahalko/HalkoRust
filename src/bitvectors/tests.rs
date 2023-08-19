@@ -790,3 +790,311 @@ fn select0_random2() {
         assert_eq!(bv.select0(i), results[i]);
     }
 }
+
+// fn: scan_bits
+#[test]
+fn scan_bv_zeros() {
+    let v: Vec<u64> = vec![0,0];
+    let bv = Bitvector::build_from_vec(&v);
+
+    for i in 1..bv.len() {
+        assert_eq!(bv.scan_bits(0, i, Bit::ONE, u64::MAX), (0, i));
+        assert_eq!(bv.scan_bits(0, i, Bit::ZERO, u64::MAX), (i as u64, i));
+    }
+}
+
+// fn: scan_bits
+#[test]
+fn scan_bv_ones() {
+    let v: Vec<u64> = vec![u64::MAX,u64::MAX];
+    let bv = Bitvector::build_from_vec(&v);
+
+    for i in 1..bv.len() {
+        assert_eq!(bv.scan_bits(0, i, Bit::ZERO, u64::MAX), (0, i));
+        assert_eq!(bv.scan_bits(0, i, Bit::ONE, u64::MAX), (i as u64, i));
+    }
+}
+
+// fn: scan_bits
+#[test]
+fn scan_range_one() {
+    let v: Vec<u64> = vec![u64::MAX,u64::MAX];
+    let bv = Bitvector::build_from_vec(&v);
+
+    for i in 1..bv.len() {
+        assert_eq!(bv.scan_bits(i-1, i, Bit::ZERO, u64::MAX), (0, i));
+        assert_eq!(bv.scan_bits(i-1, i, Bit::ONE, u64::MAX), (1, i));
+    }
+}
+
+// fn: scan_bits
+#[test]
+fn scan_small1() {
+    let a: [u32; 10] = [0,0,0,1,0,1,1,0,1,1];
+    let bv = Bitvector::build(&a);
+
+    let res1 = vec![0,0,0,1,1,2,3,3,4,5];
+    let res0 = vec![1,2,3,3,4,4,4,5,5,5];
+
+    for i in 1..bv.len() {
+        assert_eq!(
+            bv.scan_bits(0, i, Bit::ZERO, u64::MAX),
+            (res0[i-1], i),
+            "Error scanning zeros, i:{}",
+            i
+        );
+        assert_eq!(
+            bv.scan_bits(0, i, Bit::ONE, u64::MAX),
+            (res1[i-1], i),
+            "Error scanning ones, i:{}",
+            i
+        );
+    }
+}
+
+// fn: scan_bits
+#[test]
+fn scan_small2() {
+    let a: [u32; 10] = [0,0,0,0,0,1,1,1,1,1];
+    let bv = Bitvector::build(&a);
+
+    let res0 = vec![1,2,3,4,5,5,5,5,5,5];
+    let res1 = vec![0,0,0,0,0,1,2,3,4,5];
+
+    for i in 1..bv.len() {
+        assert_eq!(
+            bv.scan_bits(0, i, Bit::ZERO, u64::MAX),
+            (res0[i-1], i),
+            "Error scanning zeros, i:{}",
+            i
+        );
+        assert_eq!(
+            bv.scan_bits(0, i, Bit::ONE, u64::MAX),
+            (res1[i-1], i),
+            "Error scanning ones, i:{}",
+            i
+        );
+    }
+}
+
+// fn: scan_bits
+#[test]
+fn scan_bit_with_limit() {
+    let a: [u32; 10] = [0,0,0,0,0,1,1,1,1,1];
+    let bv = Bitvector::build(&a);
+
+    let limit = 3;
+    let res0 = vec![(1,1),(2,2),(3,3),(3,3),(3,3),(3,3),(3,3),(3,3),(3,3),(3,3)];
+    let res1 = vec![(0,1),(0,2),(0,3),(0,4),(0,5),(1,6),(2,7),(3,8),(3,8),(3,8)];
+
+    for i in 1..bv.len() {
+        assert_eq!(
+            bv.scan_bits(0, i, Bit::ZERO, limit),
+            res0[i-1],
+            "Error scanning zeros, i:{}",
+            i
+        );
+        assert_eq!(
+            bv.scan_bits(0, i, Bit::ONE, limit),
+            res1[i-1],
+            "Error scanning ones, i:{}",
+            i
+        );
+    }
+}
+
+// fn: scan_bits
+#[test]
+fn scan_small_range_with_limit() {
+    let a: [u32; 10] = [1,1,0,1,0,1,1,1,0,1];
+    let bv = Bitvector::build(&a);
+
+    // [11|01011101|]
+    assert_eq!(bv.scan_bits(2, bv.len(), Bit::ONE, 2), (2,6));
+    // [110|10111|01]
+    assert_eq!(bv.scan_bits(3, 8, Bit::ZERO, 1), (1,5));
+    // [1|1010111|01]
+    assert_eq!(bv.scan_bits(1, 8, Bit::ONE, 3), (3,6));
+}
+
+// fn: scan_bits
+#[test]
+fn scan_bits_random_without_limit() {
+    let mut rng = thread_rng();
+    const N: usize = 321;
+    let mut a: [u32; N+1] = [0; N+1];
+    let mut res0: [(u64, usize); N+1] = [(0,0); N+1];
+    let mut res1: [(u64, usize); N+1] = [(0,0); N+1];
+
+    for i in 1..a.len() {
+        a[i] = rng.gen_range(0..=1);
+        res0[i] = (res0[i-1].0 + if a[i] == 0 {1} else {0}, i);
+        res1[i] = (res1[i-1].0 + if a[i] == 0 {0} else {1}, i);
+    }
+    let bv = Bitvector::build(&a[1..]);
+
+    for i in 1..bv.len() {
+        assert_eq!(
+            bv.scan_bits(0, i, Bit::ZERO, u64::MAX),
+            res0[i],
+            "Error scanning zeros, i:{}",
+            i
+        );
+        assert_eq!(
+            bv.scan_bits(0, i, Bit::ONE, u64::MAX),
+            res1[i],
+            "Error scanning ones, i:{}",
+            i
+        );
+    }
+}
+
+// fn: scan_bits
+#[test]
+fn scan_bits_random_without_limit_start_random() {
+    let mut rng = thread_rng();
+    const N: usize = 321;
+    let mut a: [u32; N+1] = [0; N+1];
+    let mut res0: [(u64, usize); N+1] = [(0,0); N+1];
+    let mut res1: [(u64, usize); N+1] = [(0,0); N+1];
+
+    for i in 1..a.len() {
+        a[i] = rng.gen_range(0..=1);
+    }
+    let bv = Bitvector::build(&a[1..]);
+
+    let start = rng.gen_range(50..=N/2);
+    for i in start..a.len() {
+        res0[i] = (res0[i-1].0 + if a[i] == 0 {1} else {0}, i);
+        res1[i] = (res1[i-1].0 + if a[i] == 0 {0} else {1}, i);
+    }
+    for i in start..bv.len() {
+        assert_eq!(
+            bv.scan_bits(start-1, i, Bit::ZERO, u64::MAX),
+            res0[i],
+            "Error scanning zeros, i:{}, start:{}",
+            i, start
+        );
+        assert_eq!(
+            bv.scan_bits(start-1, i, Bit::ONE, u64::MAX),
+            res1[i],
+            "Error scanning ones, i:{}, start:{}",
+            i, start
+        );
+    }
+}
+
+// fn: scan_bits
+#[test]
+fn scan_bits_random_with_limit() {
+    let mut rng = thread_rng();
+    const N: usize = 321;
+    let mut a: [u32; N+1] = [0; N+1];
+    let mut res0: [(u64, usize); N+1] = [(0,0); N+1];
+    let mut res1: [(u64, usize); N+1] = [(0,0); N+1];
+
+    let limit = rng.gen_range(20..=40);
+
+    let mut limit0 = false;
+    let mut limit0_val = (0,0);
+    let mut limit1 = false;
+    let mut limit1_val = (0,0);
+
+    for i in 1..a.len() {
+        a[i] = rng.gen_range(0..=1);
+        res0[i] = if !limit0 {
+                (res0[i-1].0 + if a[i] == 0 {1} else {0}, i)
+            } else {
+                limit0_val
+            };
+        res1[i] = if !limit1 {
+                (res1[i-1].0 + if a[i] == 0 {0} else {1}, i)
+            } else {
+                limit1_val
+            };
+
+        if !limit0 && res0[i].0 == limit {
+            limit0 = true;
+            limit0_val = res0[i];
+        }
+        if !limit1 && res1[i].0 == limit {
+            limit1 = true;
+            limit1_val = res1[i];
+        }
+
+    }
+    let bv = Bitvector::build(&a[1..]);
+
+    for i in 1..bv.len() {
+        assert_eq!(
+            bv.scan_bits(0, i, Bit::ZERO, limit),
+            res0[i],
+            "Error scanning zeros, i:{}",
+            i
+        );
+        assert_eq!(
+            bv.scan_bits(0, i, Bit::ONE, limit),
+            res1[i],
+            "Error scanning ones, i:{}",
+            i
+        );
+    }
+}
+
+// fn: scan_bits
+#[test]
+fn scan_bits_random_with_limit_start_random() {
+    let mut rng = thread_rng();
+    const N: usize = 321;
+    let mut a: [u32; N+1] = [0; N+1];
+    let mut res0: [(u64, usize); N+1] = [(0,0); N+1];
+    let mut res1: [(u64, usize); N+1] = [(0,0); N+1];
+
+    for i in 1..a.len() {
+        a[i] = rng.gen_range(0..=1);
+    }
+    let bv = Bitvector::build(&a[1..]);
+
+    let limit = rng.gen_range(20..=40);
+    let mut limit0 = false;
+    let mut limit0_val = (0,0);
+    let mut limit1 = false;
+    let mut limit1_val = (0,0);
+    let start = rng.gen_range(50..=N/2);
+
+    for i in start..a.len() {
+        res0[i] = if !limit0 {
+                (res0[i-1].0 + if a[i] == 0 {1} else {0}, i)
+            } else {
+                limit0_val
+            };
+        res1[i] = if !limit1 {
+                (res1[i-1].0 + if a[i] == 0 {0} else {1}, i)
+            } else {
+                limit1_val
+            };
+
+        if !limit0 && res0[i].0 == limit {
+            limit0 = true;
+            limit0_val = res0[i];
+        }
+        if !limit1 && res1[i].0 == limit {
+            limit1 = true;
+            limit1_val = res1[i];
+        }
+    }
+    for i in start..bv.len() {
+        assert_eq!(
+            bv.scan_bits(start-1, i, Bit::ZERO, limit),
+            res0[i],
+            "Error scanning zeros, i:{}, start:{}",
+            i, start
+        );
+        assert_eq!(
+            bv.scan_bits(start-1, i, Bit::ONE, limit),
+            res1[i],
+            "Error scanning ones, i:{}, start:{}",
+            i, start
+        );
+    }
+}

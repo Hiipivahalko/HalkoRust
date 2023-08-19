@@ -320,6 +320,39 @@ impl Bitvector {
         panic!(">> Error, bitvector do not have {}th bit ->
                numbers of 0s in the bitvector is less than {}", i,i,);
     }
+
+    /// Counts bits in range `[start,stop)` with count limit.
+    /// Returns tuple `(m,k)`, where `m` is counted bits and `k` index of end of the counts.
+    /// In case of limit is reached, the function returns `(limit, k)`, where `k` is the index of
+    /// last counted bit.
+    ///
+    /// ```
+    /// use halko_rust::bitvectors::{Bitvector, Bit};
+    ///
+    /// let a: [u32; 7] = [0,1,0,0,1,1,0];
+    /// let bv = Bitvector::build(&a);
+    ///
+    /// assert_eq!(bv.scan_bits(0, bv.len(), Bit::ONE, u64::MAX), (3,bv.len()));
+    /// assert_eq!(bv.scan_bits(0, bv.len(), Bit::ZERO, u64::MAX), (4, bv.len()));
+    /// assert_eq!(bv.scan_bits(2, bv.len(), Bit::ONE, 2), (2,6));
+    /// ```
+    pub fn scan_bits(&self, start: usize, stop: usize, bit_type: Bit, limit: u64) -> (u64, usize) {
+        if start >= self.n || stop > self.n || stop < start {
+            panic!(">> Error with range values.
+                   Start:{}, Stop:{}, length of bitvector:P{}", start, stop, self.n);
+        }
+
+        let mut count: u64 = 0;
+        for i in start..stop {
+            if self.get(i) == bit_type.value() {
+                count += 1;
+                if count == limit {
+                    return (count, i+1);
+                }
+            }
+        }
+        (count, stop)
+    }
 }
 
 impl Index<usize> for Bitvector {
