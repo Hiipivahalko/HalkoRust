@@ -4,16 +4,16 @@ use std::ops::{Index, IndexMut};
 #[cfg(test)]
 mod tests;
 
-pub enum BitValue {
+pub enum Bit {
     ZERO,
     ONE,
 }
 
-impl BitValue {
+impl Bit {
     pub fn value(&self) -> u32 {
         match *self {
-           BitValue::ZERO => 0,
-           BitValue::ONE => 1,
+           Bit::ZERO => 0,
+           Bit::ONE => 1,
         }
     }
 }
@@ -24,17 +24,17 @@ impl BitValue {
 /// # Example
 ///
 /// ```
-/// use halko_rust::bitvectors::{Bitvector, BitValue};
+/// use halko_rust::bitvectors::{Bitvector, Bit};
 ///
 /// // [0,0,0,0,0]
 /// let mut bv = Bitvector::build_empty(5);
 ///
 /// for i in 0..5 { assert_eq!(0, bv.get(i)); }
 ///
-/// bv.set(0, BitValue::ONE); // bv = [1,0,0,0,0];
+/// bv.set(0, Bit::ONE); // bv = [1,0,0,0,0];
 /// assert_eq!(bv.get(0), 1);
 ///
-/// bv.set(3, BitValue::ONE); // bv = [1,0,0,1,0];
+/// bv.set(3, Bit::ONE); // bv = [1,0,0,1,0];
 /// assert_eq!(bv.get(3), 1);
 /// ```
 ///
@@ -85,8 +85,8 @@ impl Bitvector {
         let mut bv = Bitvector::build_empty(arr.len());
         for (i, v) in arr.iter().enumerate() {
             match v {
-                0 => bv.set(i, BitValue::ZERO),
-                _ => bv.set(i, BitValue::ONE)
+                0 => bv.set(i, Bit::ZERO),
+                _ => bv.set(i, Bit::ONE)
 
             }
         }
@@ -138,17 +138,17 @@ impl Bitvector {
     /// Sets or unsets the i-th bit in the bitvector.
     ///
     /// ```
-    /// use halko_rust::bitvectors::{Bitvector, BitValue};
+    /// use halko_rust::bitvectors::{Bitvector, Bit};
     /// let mut bv = Bitvector::build_empty(5); // [0,0,0,0,0]
     ///
-    /// bv.set(1, BitValue::ONE); // [0,1,0,0,0]
-    /// bv.set(1, BitValue::ZERO); // [0,0,0,0,0]
+    /// bv.set(1, Bit::ONE); // [0,1,0,0,0]
+    /// bv.set(1, Bit::ZERO); // [0,0,0,0,0]
     /// ```
-    pub fn set(&mut self, i: usize, val: BitValue) {
+    pub fn set(&mut self, i: usize, val: Bit) {
         const I: u64 = 1;
         match val {
-            BitValue::ZERO => self.data[i/64] &= !(I << (i%64)),
-            BitValue::ONE => self.data[i/64] |= I << (i%64),
+            Bit::ZERO => self.data[i/64] &= !(I << (i%64)),
+            Bit::ONE => self.data[i/64] |= I << (i%64),
         }
     }
 

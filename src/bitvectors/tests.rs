@@ -2,7 +2,7 @@ use std::panic;
 use std::vec::Vec;
 use rand::{Rng, thread_rng};
 
-use crate::bitvectors::{Bitvector, BitValue};
+use crate::bitvectors::{Bitvector, Bit};
 
 // fn: build_empty
 #[test]
@@ -170,7 +170,7 @@ fn set_get_fn_small_bitvector_mutate() {
 
     let arr = [1, 5, 7];
     for i in 0..arr.len() {
-        bv.set(arr[i], BitValue::ONE);
+        bv.set(arr[i], Bit::ONE);
     }
 
     for i in 0..n {
@@ -197,7 +197,7 @@ fn set_get_fn_small_bitvector_mutate_random() {
     }
 
     for i in arr {
-        bv.set(i, BitValue::ONE);
+        bv.set(i, Bit::ONE);
     }
 
     for i in 0..n {
@@ -217,7 +217,7 @@ fn all_ones() {
     let mut bv = Bitvector::build_empty(n);
 
     for i in 0..n {
-        bv.set(i, BitValue::ONE);
+        bv.set(i, Bit::ONE);
     }
 
     for i in 0..n {
@@ -235,10 +235,10 @@ fn all_ones_first_then_back_zeros() {
     let mut bv = Bitvector::build_empty(n);
 
     for i in 0..n {
-        bv.set(i, BitValue::ONE);
+        bv.set(i, Bit::ONE);
     }
     for i in 0..n {
-        bv.set(i, BitValue::ZERO);
+        bv.set(i, Bit::ZERO);
     }
 
     for i in 0..n {
@@ -303,7 +303,7 @@ fn rank1_zeros() {
 fn rank1_ones() {
     let mut bv = Bitvector::build_empty(300);
     for i in 0..bv.len() {
-        bv.set(i, BitValue::ONE);
+        bv.set(i, Bit::ONE);
     }
 
     for i in 0..bv.len() {
@@ -423,7 +423,7 @@ fn rank0_zeros() {
 fn rank0_ones() {
     let mut bv = Bitvector::build_empty(300);
     for i in 0..bv.len() {
-        bv.set(i, BitValue::ONE);
+        bv.set(i, Bit::ONE);
     }
 
     for i in 0..bv.len() {
