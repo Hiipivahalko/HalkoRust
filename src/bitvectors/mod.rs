@@ -4,23 +4,37 @@ use std::ops::{Index, IndexMut};
 #[cfg(test)]
 mod tests;
 
+pub enum Bit {
+    ZERO,
+    ONE,
+}
+
+impl Bit {
+    pub fn value(&self) -> u32 {
+        match *self {
+           Bit::ZERO => 0,
+           Bit::ONE => 1,
+        }
+    }
+}
+
 /// Simple bitvector implementation.
 /// Use struct's build-functions to building/initializing Bitvector
 ///
 /// # Example
 ///
 /// ```
-/// use halko_rust::bitvectors::Bitvector;
+/// use halko_rust::bitvectors::{Bitvector, Bit};
 ///
 /// // [0,0,0,0,0]
 /// let mut bv = Bitvector::build_empty(5);
 ///
 /// for i in 0..5 { assert_eq!(0, bv.get(i)); }
 ///
-/// bv.set(0, 1); // bv = [1,0,0,0,0];
+/// bv.set(0, Bit::ONE); // bv = [1,0,0,0,0];
 /// assert_eq!(bv.get(0), 1);
 ///
-/// bv.set(3, 1); // bv = [1,0,0,1,0];
+/// bv.set(3, Bit::ONE); // bv = [1,0,0,1,0];
 /// assert_eq!(bv.get(3), 1);
 /// ```
 ///
@@ -28,7 +42,7 @@ mod tests;
 /// ```
 /// use halko_rust::bitvectors::Bitvector;
 ///
-/// let a: [u64; 7] = [0,1,0,0,1,1,0];
+/// let a: [u32; 7] = [0,1,0,0,1,1,0];
 /// let bv = Bitvector::build(&a);
 ///
 /// for i in 0..a.len() { assert_eq!(a[i], bv.get(i)); }
@@ -62,15 +76,19 @@ impl Bitvector {
     /// ```
     /// use halko_rust::bitvectors::Bitvector;
     ///
-    /// let a: [u64; 7] = [0,1,0,0,1,1,0];
+    /// let a: [u32; 7] = [0,1,0,0,1,1,0];
     /// let bv = Bitvector::build(&a);
     ///
     /// for i in 0..a.len() { assert_eq!(a[i], bv.get(i)); }
     /// ```
-    pub fn build(arr: &[u64]) -> Bitvector {
+    pub fn build(arr: &[u32]) -> Bitvector {
         let mut bv = Bitvector::build_empty(arr.len());
         for (i, v) in arr.iter().enumerate() {
-            bv.set(i, *v);
+            match v {
+                0 => bv.set(i, Bit::ZERO),
+                _ => bv.set(i, Bit::ONE)
+
+            }
         }
 
         bv
@@ -112,26 +130,25 @@ impl Bitvector {
     }
 
     /// Returns bit value in the i-th bit.
-    pub fn get(&self, i: usize) -> u64 {
-        let one: u64 = 1;
-        (&self.data[i/64] >> (i%64)) & one
+    pub fn get(&self, i: usize) -> u32 {
+        const I: u32 = 1;
+        (&self.data[i/64] >> (i%64)) as u32 & I
     }
 
     /// Sets or unsets the i-th bit in the bitvector.
     ///
     /// ```
-    /// use halko_rust::bitvectors::Bitvector;
+    /// use halko_rust::bitvectors::{Bitvector, Bit};
     /// let mut bv = Bitvector::build_empty(5); // [0,0,0,0,0]
     ///
-    /// bv.set(1, 1); // [0,1,0,0,0]
-    /// bv.set(1, 0); // [0,0,0,0,0]
+    /// bv.set(1, Bit::ONE); // [0,1,0,0,0]
+    /// bv.set(1, Bit::ZERO); // [0,0,0,0,0]
     /// ```
-    pub fn set(&mut self, i: usize, val: u64) {
-        let one: u64 = 1;
-        if val == 0 {
-            self.data[i/64] &= !(one << (i%64));
-        } else {
-           self.data[i/64] |= one << (i%64);
+    pub fn set(&mut self, i: usize, val: Bit) {
+        const I: u64 = 1;
+        match val {
+            Bit::ZERO => self.data[i/64] &= !(I << (i%64)),
+            Bit::ONE => self.data[i/64] |= I << (i%64),
         }
     }
 
@@ -141,7 +158,7 @@ impl Bitvector {
     /// use std::panic;
     /// use halko_rust::bitvectors::Bitvector;
     ///
-    /// let a: [u64; 7] = [0,1,0,0,1,1,0];
+    /// let a: [u32; 7] = [0,1,0,0,1,1,0];
     /// let bv = Bitvector::build(&a);
     ///
     /// assert_eq!(bv.rank1(0), 0);
@@ -172,7 +189,7 @@ impl Bitvector {
     /// use std::panic;
     /// use halko_rust::bitvectors::Bitvector;
     ///
-    /// let a: [u64; 7] = [0,1,0,0,1,1,0];
+    /// let a: [u32; 7] = [0,1,0,0,1,1,0];
     /// let bv = Bitvector::build(&a);
     ///
     /// assert_eq!(bv.rank0(0), 1);
@@ -196,7 +213,7 @@ impl Bitvector {
     /// use std::panic;
     /// use halko_rust::bitvectors::Bitvector;
     ///
-    /// let a: [u64; 7] = [0,1,0,0,1,1,0];
+    /// let a: [u32; 7] = [0,1,0,0,1,1,0];
     /// let bv = Bitvector::build(&a);
     ///
     /// assert_eq!(bv.select1(1), 1);
@@ -217,33 +234,14 @@ impl Bitvector {
             panic!("Input value i must be greater than 0 (zero). There is not 0th 1bit in the bitvector");
         }
 
-        let mut indicies_before_select_i: usize = 0;
-        // idea: loop first blocks until limit found and then final block
-        for (k, x) in self.data.iter().enumerate() {
-            let ones_in_x = x.count_ones() as usize;
-            if indicies_before_select_i + ones_in_x >= i {
-                for j in 0..64 { // loop final block in self.data
-                    // this applies only for the last block in self.data
-                    // when last block contains redudant bits (n%64 != 0)
-                    if j + (k*64) >= self.n {
-                        break;
-                    }
-
-                    if self.get(j+(k*64)) == 1 {
-                        indicies_before_select_i += 1;
-                    }
-
-                    if indicies_before_select_i == i {
-                        return k*64 + j;
-                    }
-                }
-                panic!("Something went wrong when computing the select value, select1 function have error!");
-            }
-            indicies_before_select_i += ones_in_x;
+        let index = self.scan_blocks(0, self.n-1, Bit::ONE, i as u64);
+        println!("index:{}", index.0);
+        if index.0 as usize == i {
+            return index.1;
         }
 
-        panic!(">> Error, bitvector do not have {}th bit ->
-               numbers of 1s in the bitvector is less than {}", i,i,);
+        panic!(">> Error, bitvector do not have {}th bit -> \
+               numbers of 0s in the bitvector is {}", i,index.0,);
     }
 
     /// Returns index of `i`-th 0bit in the bitvector.
@@ -253,7 +251,7 @@ impl Bitvector {
     /// use std::panic;
     /// use halko_rust::bitvectors::Bitvector;
     ///
-    /// let a: [u64; 7] = [0,1,0,0,1,1,0];
+    /// let a: [u32; 7] = [0,1,0,0,1,1,0];
     /// let bv = Bitvector::build(&a);
     ///
     /// assert_eq!(bv.select0(1), 0);
@@ -275,34 +273,135 @@ impl Bitvector {
             panic!("Input value i must be greater than 0 (zero). There is not 0th 0bit in the bitvector");
         }
 
-        let mut indicies_before_select_i: usize = 0;
-        // idea: loop first blocks until limit found and then final block
-        for (k, x) in self.data.iter().enumerate() {
-            let zeros_in_x = x.count_zeros() as usize;
-            if indicies_before_select_i + zeros_in_x >= i {
-                for j in 0..64 { // loop the next block after limit in self.data
-                    // this applies only for the last block in self.data
-                    // when last block contains redudant bits (n%64 != 0)
-                    if j + (k*64) >= self.n {
-                        break;
-                    }
-
-                    if self.get(j+(k*64)) == 0 {
-                        indicies_before_select_i += 1;
-                    }
-
-                    if indicies_before_select_i == i {
-                        return k*64 + j;
-                    }
-                }
-                panic!("Something went wrong when computing the select value, select1 function have error!");
-            }
-            indicies_before_select_i += zeros_in_x;
+        let index = self.scan_blocks(0, self.n-1, Bit::ZERO, i as u64);
+        println!("index:{}", index.0);
+        if index.0 as usize == i {
+            return index.1;
         }
 
-        panic!(">> Error, bitvector do not have {}th bit ->
-               numbers of 0s in the bitvector is less than {}", i,i,);
+        panic!(">> Error, bitvector do not have {}th bit -> \
+               numbers of 0s in the bitvector is {}", i,index.0,);
     }
+
+    /// Counts bits in range `[start,stop]` with count limit.
+    /// Returns tuple `(m,k)`, where `m` is counted bits and `k` index of end of the counts.
+    /// In case of limit is reached, the function returns `(limit, k)`, where `k` is the index of
+    /// last counted bit.
+    ///
+    /// ```
+    /// use halko_rust::bitvectors::{Bitvector, Bit};
+    ///
+    /// let a: [u32; 7] = [0,1,0,0,1,1,0];
+    /// let bv = Bitvector::build(&a);
+    ///
+    /// assert_eq!(bv.scan_bits(0, bv.len()-1, Bit::ONE, u64::MAX), (3,bv.len()-1));
+    /// assert_eq!(bv.scan_bits(0, bv.len()-1, Bit::ZERO, u64::MAX), (4, bv.len()-1));
+    /// assert_eq!(bv.scan_bits(2, bv.len()-1, Bit::ONE, 2), (2,5));
+    /// ```
+    pub fn scan_bits(&self, start: usize, stop: usize, bit_type: Bit, limit: u64) -> (u64, usize) {
+        if start >= self.n || stop >= self.n || stop < start {
+            panic!(">> Error with range values. \
+                   Start:{}, Stop:{}, length of bitvector:{}", start, stop, self.n);
+        }
+
+        let mut count: u64 = 0;
+        for i in start..=stop {
+            if self.get(i) == bit_type.value() {
+                count += 1;
+                if count == limit {
+                    return (count, i);
+                }
+            }
+        }
+        (count, stop)
+    }
+
+    /// Counts bits in range `[start,stop]` with count limit by looping blocks in raw data.
+    /// Returns tuple `(m,k)`, where `m` is counted bits and `k` index of end of the counts.
+    /// In case of limit is reached, the function returns `(limit, k)`, where `k` is the index of
+    /// last counted bit.
+    ///
+    /// ```
+    /// use halko_rust::bitvectors::{Bitvector, Bit};
+    ///
+    /// let a: [u32; 7] = [0,1,0,0,1,1,0];
+    /// let bv = Bitvector::build(&a);
+    ///
+    /// assert_eq!(bv.scan_blocks(0, bv.len()-1, Bit::ONE, u64::MAX), (3,bv.len()-1));
+    /// assert_eq!(bv.scan_blocks(0, bv.len()-1, Bit::ZERO, u64::MAX), (4, bv.len()-1));
+    /// assert_eq!(bv.scan_blocks(2, bv.len()-1, Bit::ONE, 2), (2,5));
+    /// ```
+    pub fn scan_blocks(&self, start: usize, stop: usize, bit_type: Bit, limit: u64) -> (u64, usize) {
+        if start >= self.n || stop > self.n || stop < start {
+            panic!(">> Error with range values.
+                   Start:{}, Stop:{}, length of blocks:{}", start, stop, self.n);
+        }
+
+        let mut count: u64 = 0;
+        let j = start/64;
+        let k = stop/64;
+
+        // loop blocks
+        for i in j..=k {
+            let mut _next_count = 0;
+
+            // checking first block if start mod B != 0
+            if i == j && start % 64 != 0 && j != k {
+                let first_bits = self.data[i] >> start%64;
+                _next_count = match bit_type {
+                    Bit::ZERO => ( ( u64::MAX << (64-(start%64)) ) | first_bits ).count_zeros() as u64,
+                    Bit::ONE => first_bits.count_ones() as u64,
+                };
+
+                if _next_count >= limit {
+                    return self.scan_bits(start, stop, bit_type, limit);
+                }
+
+            } else if i == k {
+
+                let last_bits = if j != k {
+                    // yyyyXX
+                    // XX0000
+                    self.data[i] << (64-1-(stop%64))
+                } else {
+                    // yyyXXy
+                    // 0yyyXX
+                    // XX0000
+                    (self.data[i] >> (start%64)) << (64-1-((stop%64)-(start%64)))
+                };
+
+                let y = if j != k {i*64} else {start};
+
+                _next_count = match bit_type {
+                    Bit::ZERO => if (stop%64)-(y%64)+1 == 64 {
+                        last_bits.count_zeros() as u64
+                    } else {
+                        ( (u64::MAX >> ((stop%64)-(y%64)+1)) | last_bits ).count_zeros() as u64
+                    },
+                    Bit::ONE => last_bits.count_ones() as u64,
+                };
+
+                if count + _next_count >= limit {
+                    return (limit, self.scan_bits(y, stop, bit_type, limit - count).1);
+                }
+
+            } else {
+                _next_count = match bit_type {
+                    Bit::ZERO => self.data[i].count_zeros() as u64,
+                    Bit::ONE => self.data[i].count_ones() as u64,
+                };
+
+                if count + _next_count >= limit {
+                    return (limit, self.scan_bits(i*64, (i+1)*64, bit_type, limit - count).1);
+                }
+            }
+            count += _next_count;
+
+        }
+
+        (count,stop)
+    }
+
 }
 
 impl Index<usize> for Bitvector {
