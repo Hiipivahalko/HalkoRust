@@ -353,6 +353,93 @@ impl Bitvector {
         }
         (count, stop)
     }
+
+    /// Counts bits in range `[start,stop]` with count limit by looping blocks in raw data.
+    /// Returns tuple `(m,k)`, where `m` is counted bits and `k` index of end of the counts.
+    /// In case of limit is reached, the function returns `(limit, k)`, where `k` is the index of
+    /// last counted bit.
+    ///
+    /// ```
+    /// use halko_rust::bitvectors::{Bitvector, Bit};
+    ///
+    /// let a: [u32; 7] = [0,1,0,0,1,1,0];
+    /// let bv = Bitvector::build(&a);
+    ///
+    /// assert_eq!(bv.scan_blocks(0, bv.len()-1, Bit::ONE, u64::MAX), (3,bv.len()-1));
+    /// assert_eq!(bv.scan_blocks(0, bv.len()-1, Bit::ZERO, u64::MAX), (4, bv.len()-1));
+    /// assert_eq!(bv.scan_blocks(2, bv.len()-1, Bit::ONE, 2), (2,5));
+    /// ```
+    pub fn scan_blocks(&self, start: usize, stop: usize, bit_type: Bit, limit: u64) -> (u64, usize) {
+        if start >= self.n || stop > self.n || stop < start {
+            panic!(">> Error with range values.
+                   Start:{}, Stop:{}, length of blocks:{}", start, stop, self.n);
+        }
+
+        let mut count: u64 = 0;
+        let j = start/64;
+        let k = stop/64;
+
+        // loop blocks
+        for i in j..=k {
+            let mut _next_count = 0;
+
+            // checking first block if start mod B != 0
+            if i == j && start % 64 != 0 && j != k {
+                let first_bits = self.data[i] >> start%64;
+                _next_count = match bit_type {
+                    Bit::ZERO => ( ( u64::MAX << (64-(start%64)) ) | first_bits ).count_zeros() as u64,
+                    Bit::ONE => first_bits.count_ones() as u64,
+                };
+
+                if _next_count >= limit {
+                    return self.scan_bits(start, stop, bit_type, limit);
+                }
+
+            } else if i == k {
+
+                let last_bits = if j != k {
+                    // yyyyXX
+                    // XX0000
+                    self.data[i] << (64-1-(stop%64))
+                } else {
+                    // yyyXXy
+                    // 0yyyXX
+                    // XX0000
+                    (self.data[i] >> (start%64)) << (64-1-((stop%64)-(start%64)))
+                };
+
+                let y = if j != k {i*64} else {start};
+
+                _next_count = match bit_type {
+                    Bit::ZERO => if (stop%64)-(y%64)+1 == 64 {
+                        last_bits.count_zeros() as u64
+                    } else {
+                        ( (u64::MAX >> ((stop%64)-(y%64)+1)) | last_bits ).count_zeros() as u64
+                    },
+                    Bit::ONE => last_bits.count_ones() as u64,
+                };
+
+                if count + _next_count >= limit {
+                    return (limit, self.scan_bits(y, stop, bit_type, limit - count).1);
+                }
+
+            } else {
+                _next_count = match bit_type {
+                    Bit::ZERO => self.data[i].count_zeros() as u64,
+                    Bit::ONE => self.data[i].count_ones() as u64,
+                };
+
+                if count + _next_count >= limit {
+                    return (limit, self.scan_bits(i*64, (i+1)*64, bit_type, limit - count).1);
+                }
+            }
+            count += _next_count;
+
+        }
+
+        (count,stop)
+    }
+
 }
 
 impl Index<usize> for Bitvector {
