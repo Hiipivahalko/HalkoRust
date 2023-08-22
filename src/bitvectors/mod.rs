@@ -234,33 +234,14 @@ impl Bitvector {
             panic!("Input value i must be greater than 0 (zero). There is not 0th 1bit in the bitvector");
         }
 
-        let mut indicies_before_select_i: usize = 0;
-        // idea: loop first blocks until limit found and then final block
-        for (k, x) in self.data.iter().enumerate() {
-            let ones_in_x = x.count_ones() as usize;
-            if indicies_before_select_i + ones_in_x >= i {
-                for j in 0..64 { // loop final block in self.data
-                    // this applies only for the last block in self.data
-                    // when last block contains redudant bits (n%64 != 0)
-                    if j + (k*64) >= self.n {
-                        break;
-                    }
-
-                    if self.get(j+(k*64)) == 1 {
-                        indicies_before_select_i += 1;
-                    }
-
-                    if indicies_before_select_i == i {
-                        return k*64 + j;
-                    }
-                }
-                panic!("Something went wrong when computing the select value, select1 function have error!");
-            }
-            indicies_before_select_i += ones_in_x;
+        let index = self.scan_blocks(0, self.n-1, Bit::ONE, i as u64);
+        println!("index:{}", index.0);
+        if index.0 as usize == i {
+            return index.1;
         }
 
-        panic!(">> Error, bitvector do not have {}th bit ->
-               numbers of 1s in the bitvector is less than {}", i,i,);
+        panic!(">> Error, bitvector do not have {}th bit -> \
+               numbers of 0s in the bitvector is {}", i,index.0,);
     }
 
     /// Returns index of `i`-th 0bit in the bitvector.
@@ -292,33 +273,14 @@ impl Bitvector {
             panic!("Input value i must be greater than 0 (zero). There is not 0th 0bit in the bitvector");
         }
 
-        let mut indicies_before_select_i: usize = 0;
-        // idea: loop first blocks until limit found and then final block
-        for (k, x) in self.data.iter().enumerate() {
-            let zeros_in_x = x.count_zeros() as usize;
-            if indicies_before_select_i + zeros_in_x >= i {
-                for j in 0..64 { // loop the next block after limit in self.data
-                    // this applies only for the last block in self.data
-                    // when last block contains redudant bits (n%64 != 0)
-                    if j + (k*64) >= self.n {
-                        break;
-                    }
-
-                    if self.get(j+(k*64)) == 0 {
-                        indicies_before_select_i += 1;
-                    }
-
-                    if indicies_before_select_i == i {
-                        return k*64 + j;
-                    }
-                }
-                panic!("Something went wrong when computing the select value, select1 function have error!");
-            }
-            indicies_before_select_i += zeros_in_x;
+        let index = self.scan_blocks(0, self.n-1, Bit::ZERO, i as u64);
+        println!("index:{}", index.0);
+        if index.0 as usize == i {
+            return index.1;
         }
 
-        panic!(">> Error, bitvector do not have {}th bit ->
-               numbers of 0s in the bitvector is less than {}", i,i,);
+        panic!(">> Error, bitvector do not have {}th bit -> \
+               numbers of 0s in the bitvector is {}", i,index.0,);
     }
 
     /// Counts bits in range `[start,stop]` with count limit.
@@ -338,7 +300,7 @@ impl Bitvector {
     /// ```
     pub fn scan_bits(&self, start: usize, stop: usize, bit_type: Bit, limit: u64) -> (u64, usize) {
         if start >= self.n || stop >= self.n || stop < start {
-            panic!(">> Error with range values.
+            panic!(">> Error with range values. \
                    Start:{}, Stop:{}, length of bitvector:{}", start, stop, self.n);
         }
 

@@ -704,13 +704,13 @@ fn select0_bitvector_all_zeros() {
     let bv = Bitvector::build_from_vec(&v);
 
     for i in 1..=bv.len() {
-        let select1 = bv.select0(i);
+        let select0 = bv.select0(i);
         assert_eq!(
-            select1,
+            select0,
             i-1,
             "\n>> Error at {}-th 0bit,\nselect0({},bv): {},\ncorrect: {}\n",
             i,i,
-            select1,
+            select0,
             i-1
         );
     }
