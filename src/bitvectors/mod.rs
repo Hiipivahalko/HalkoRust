@@ -116,6 +116,29 @@ impl Bitvector {
         }
     }
 
+    /// Builds bitvector from input array containing only 0s and 1s.
+    ///
+    /// ```
+    /// use halko_rust::bitvectors::Bitvector;
+    ///
+    /// let v = vec![0,1,0,0,1,1,0];
+    /// let bv = Bitvector::build_from_vec2(&v);
+    ///
+    /// for i in 0..v.len() { assert_eq!(v[i], bv.get(i)); }
+    /// ```
+    pub fn build_from_vec2(v: &Vec<u32>) -> Bitvector {
+        let mut bv = Bitvector::build_empty(v.len());
+        for (i, val) in v.iter().enumerate() {
+            match val {
+                0 => bv.set(i, Bit::ZERO),
+                _ => bv.set(i, Bit::ONE)
+
+            }
+        }
+
+        bv
+    }
+
 
     /// Return length of the bitvector (number of bits).
     ///
