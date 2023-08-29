@@ -258,7 +258,6 @@ impl Bitvector {
         }
 
         let index = self.scan_blocks(0, self.n-1, Bit::ONE, i as u64);
-        println!("index:{}", index.0);
         if index.0 as usize == i {
             return index.1;
         }
@@ -297,7 +296,6 @@ impl Bitvector {
         }
 
         let index = self.scan_blocks(0, self.n-1, Bit::ZERO, i as u64);
-        println!("index:{}", index.0);
         if index.0 as usize == i {
             return index.1;
         }
@@ -355,9 +353,9 @@ impl Bitvector {
     /// assert_eq!(bv.scan_blocks(2, bv.len()-1, Bit::ONE, 2), (2,5));
     /// ```
     pub fn scan_blocks(&self, start: usize, stop: usize, bit_type: Bit, limit: u64) -> (u64, usize) {
-        if start >= self.n || stop > self.n || stop < start {
-            panic!(">> Error with range values.
-                   Start:{}, Stop:{}, length of blocks:{}", start, stop, self.n);
+        if start >= self.n || stop >= self.n || stop < start {
+            panic!(">> [Bitvector::scan_blocks error] Error with range values. \
+                   Start:{}, Stop:{}, length of bitvector:{}", start, stop, self.n);
         }
 
         let mut count: u64 = 0;
