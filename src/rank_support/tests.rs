@@ -13,10 +13,10 @@ fn new_bv64_ones() {
 
     let rs = RankSupport::new(Bitvector::build_from_vec(&v));
 
-    let res_level1: Vec<u64> = vec![36];
+    let res_level1: Vec<u64> = vec![0,36];
     let res_level2: Vec<u64> = vec![
-                                    6,12,18,24,30,
-                                    6,12,18,24,
+                                    0,6,12,18,24,30,
+                                    0,6,12,18,24,
                                 ];
 
     assert_eq!(*rs.get_block_level1(), res_level1);
@@ -31,11 +31,11 @@ fn new_bv128_ones() {
 
     let rs = RankSupport::new(Bitvector::build_from_vec(&v));
 
-    let res_level1: Vec<u64> = vec![49,98];
+    let res_level1: Vec<u64> = vec![0,49,98];
     let res_level2: Vec<u64> = vec![
-                                    7,14,21,28,35,42,
-                                    7,14,21,28,35,42,
-                                    7,14,21,28,
+                                    0,7,14,21,28,35,42,
+                                    0,7,14,21,28,35,42,
+                                    0,7,14,21,28,
                                 ];
 
     assert_eq!(*rs.get_block_level1(), res_level1);
@@ -50,12 +50,12 @@ fn new_bv192_ones() {
 
     let rs = RankSupport::new(Bitvector::build_from_vec(&v));
 
-    let res_level1: Vec<u64> = vec![49,98,147];
+    let res_level1: Vec<u64> = vec![0,49,98,147];
     let res_level2: Vec<u64> = vec![
-                                    7,14,21,28,35,42,
-                                    7,14,21,28,35,42,
-                                    7,14,21,28,35,42,
-                                    7,14,21,28,35,42
+                                    0,7,14,21,28,35,42,
+                                    0,7,14,21,28,35,42,
+                                    0,7,14,21,28,35,42,
+                                    0,7,14,21,28,35,42
                                 ];
 
     assert_eq!(*rs.get_block_level1(), res_level1);
@@ -70,11 +70,11 @@ fn new_bv256_ones() {
 
     let rs = RankSupport::new(Bitvector::build_from_vec(&v));
 
-    let res_level1: Vec<u64> = vec![64, 128, 192, 256];
-    let res_level2: Vec<u64> = vec![8, 16, 24, 32, 40, 48, 56,
-                                    8, 16, 24, 32, 40, 48, 56,
-                                    8, 16, 24, 32, 40, 48, 56,
-                                    8, 16, 24, 32, 40, 48, 56];
+    let res_level1: Vec<u64> = vec![0,64,128,192];
+    let res_level2: Vec<u64> = vec![0,8, 16, 24, 32, 40, 48, 56,
+                                    0,8, 16, 24, 32, 40, 48, 56,
+                                    0,8, 16, 24, 32, 40, 48, 56,
+                                    0,8, 16, 24, 32, 40, 48, 56];
 
     assert_eq!(*rs.get_block_level1(), res_level1);
     assert_eq!(*rs.get_block_level2(), res_level2);
@@ -88,10 +88,10 @@ fn new_bv64_zeros() {
 
     let rs = RankSupport::new(Bitvector::build_from_vec(&v));
 
-    let res_level1: Vec<u64> = vec![0];
+    let res_level1: Vec<u64> = vec![0,0];
     let res_level2: Vec<u64> = vec![
+                                    0,0,0,0,0,0,
                                     0,0,0,0,0,
-                                    0,0,0,0,
                                 ];
 
     assert_eq!(*rs.get_block_level1(), res_level1);
@@ -106,11 +106,11 @@ fn new_bv128_zeros() {
 
     let rs = RankSupport::new(Bitvector::build_from_vec(&v));
 
-    let res_level1: Vec<u64> = vec![0,0];
+    let res_level1: Vec<u64> = vec![0,0,0];
     let res_level2: Vec<u64> = vec![
-                                    0,0,0,0,0,0,
-                                    0,0,0,0,0,0,
-                                    0,0,0,0,
+                                    0,0,0,0,0,0,0,
+                                    0,0,0,0,0,0,0,
+                                    0,0,0,0,0,
                                 ];
 
     assert_eq!(*rs.get_block_level1(), res_level1);
@@ -122,26 +122,6 @@ fn new_bv128_zeros() {
 fn new_bv192_zeros() {
 
     let v = vec![0; 3];
-
-    let rs = RankSupport::new(Bitvector::build_from_vec(&v));
-
-    let res_level1: Vec<u64> = vec![0,0,0];
-    let res_level2: Vec<u64> = vec![
-                                    0,0,0,0,0,0,
-                                    0,0,0,0,0,0,
-                                    0,0,0,0,0,0,
-                                    0,0,0,0,0,0,
-                                ];
-
-    assert_eq!(*rs.get_block_level1(), res_level1);
-    assert_eq!(*rs.get_block_level2(), res_level2);
-}
-
-// fn: new
-#[test]
-fn new_bv256_zeros() {
-
-    let v = vec![0; 4];
 
     let rs = RankSupport::new(Bitvector::build_from_vec(&v));
 
@@ -159,6 +139,26 @@ fn new_bv256_zeros() {
 
 // fn: new
 #[test]
+fn new_bv256_zeros() {
+
+    let v = vec![0; 4];
+
+    let rs = RankSupport::new(Bitvector::build_from_vec(&v));
+
+    let res_level1: Vec<u64> = vec![0,0,0,0];
+    let res_level2: Vec<u64> = vec![
+                                    0,0,0,0,0,0,0,0,
+                                    0,0,0,0,0,0,0,0,
+                                    0,0,0,0,0,0,0,0,
+                                    0,0,0,0,0,0,0,0,
+                                ];
+
+    assert_eq!(*rs.get_block_level1(), res_level1);
+    assert_eq!(*rs.get_block_level2(), res_level2);
+}
+
+// fn: new
+#[test]
 fn new_bv64_mixed() {
 
     let mut a = [0; 64];
@@ -168,10 +168,10 @@ fn new_bv64_mixed() {
 
     let rs = RankSupport::new(Bitvector::build(&a));
 
-    let res_level1: Vec<u64> = vec![36];
+    let res_level1: Vec<u64> = vec![0,36];
     let res_level2: Vec<u64> = vec![
-                                    6,12,18,24,30,
-                                    0,0,0,0,
+                                    0,6,12,18,24,30,
+                                    0,0,0,0,0,
                                 ];
 
     assert_eq!(*rs.get_block_level1(), res_level1);
@@ -190,11 +190,11 @@ fn new_bv128_mixed() {
 
     let rs = RankSupport::new(Bitvector::build(&a));
 
-    let res_level1: Vec<u64> = vec![49,49];
+    let res_level1: Vec<u64> = vec![0,49,49];
     let res_level2: Vec<u64> = vec![
-                                    7,14,21,28,35,42,
-                                    0,0,0,0,0,0,
-                                    7,14,21,28,
+                                    0,7,14,21,28,35,42,
+                                    0,0,0,0,0,0,0,
+                                    0,7,14,21,28,
                                 ];
 
     assert_eq!(*rs.get_block_level1(), res_level1);
@@ -213,12 +213,12 @@ fn new_bv192_mixed() {
 
     let rs = RankSupport::new(Bitvector::build(&a));
 
-    let res_level1: Vec<u64> = vec![49,49,98];
+    let res_level1: Vec<u64> = vec![0,49,49,98];
     let res_level2: Vec<u64> = vec![
-                                    7,14,21,28,35,42,
-                                    0,0,0,0,0,0,
-                                    7,14,21,28,35,42,
-                                    0,0,0,0,0,0,
+                                    0,7,14,21,28,35,42,
+                                    0,0,0,0,0,0,0,
+                                    0,7,14,21,28,35,42,
+                                    0,0,0,0,0,0,0,
                                 ];
 
     assert_eq!(*rs.get_block_level1(), res_level1);
@@ -236,11 +236,11 @@ fn new_bv256_mixed() {
 
     let rs = RankSupport::new(Bitvector::build(&a));
 
-    let res_level1: Vec<u64> = vec![64,64,128,128];
-    let res_level2: Vec<u64> = vec![8, 16, 24, 32, 40, 48, 56,
-                                    0,0,0,0,0,0,0,
-                                    8, 16, 24, 32, 40, 48, 56,
-                                    0,0,0,0,0,0,0];
+    let res_level1: Vec<u64> = vec![0,64,64,128];
+    let res_level2: Vec<u64> = vec![0,8,16,24,32,40,48,56,
+                                    0,0,0,0,0,0,0,0,
+                                    0,8,16,24,32,40,48,56,
+                                    0,0,0,0,0,0,0,0];
 
     assert_eq!(*rs.get_block_level1(), res_level1);
     assert_eq!(*rs.get_block_level2(), res_level2);
@@ -259,7 +259,7 @@ fn new_build_all_sizes_from_1_to_100() {
 #[test]
 fn new_build_random() {
     let mut rng = thread_rng();
-    for i in 0..5 {
+    for _i in 0..5 {
         let n = rng.gen_range(200..300);
         let v: Vec<u32> = (0..n).map(|_| rng.gen_range(0..=1)).collect();
 
