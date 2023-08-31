@@ -117,4 +117,30 @@ impl RankSupport {
         b1_sum+b2_sum+scan_sum
     }
 
+    /// Returns numbers of 0s in O(1) time from the bitvector in range `[0,i]`.
+    /// Note rank0 query is computed usign rank1 query.
+    ///
+    /// ```
+    /// use std::panic;
+    /// use halko_rust::bitvectors::Bitvector;
+    /// use halko_rust::rank_support::RankSupport;
+    ///
+    /// let a: [u32; 7] = [0,1,0,0,1,1,0];
+    /// let bv = Bitvector::build(&a);
+    /// let rs = RankSupport::new(bv);
+    ///
+    /// assert_eq!(rs.rank0(0), 1);
+    /// assert_eq!(rs.rank0(1), 1);
+    /// assert_eq!(rs.rank0(2), 2);
+    /// assert_eq!(rs.rank0(6), 4);
+    ///
+    /// let panic_result = panic::catch_unwind(|| {
+    ///     rs.rank0(7)
+    /// });
+    /// assert!(panic_result.is_err());
+    /// ```
+    pub fn rank0(&self, i: usize) -> u64 {
+        (i as u64+1) - self.rank1(i)
+    }
+
 }
