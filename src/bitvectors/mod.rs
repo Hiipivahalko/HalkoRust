@@ -116,6 +116,29 @@ impl Bitvector {
         }
     }
 
+    /// Builds bitvector from input array containing only 0s and 1s.
+    ///
+    /// ```
+    /// use halko_rust::bitvectors::Bitvector;
+    ///
+    /// let v = vec![0,1,0,0,1,1,0];
+    /// let bv = Bitvector::build_from_vec2(&v);
+    ///
+    /// for i in 0..v.len() { assert_eq!(v[i], bv.get(i)); }
+    /// ```
+    pub fn build_from_vec2(v: &Vec<u32>) -> Bitvector {
+        let mut bv = Bitvector::build_empty(v.len());
+        for (i, val) in v.iter().enumerate() {
+            match val {
+                0 => bv.set(i, Bit::ZERO),
+                _ => bv.set(i, Bit::ONE)
+
+            }
+        }
+
+        bv
+    }
+
 
     /// Return length of the bitvector (number of bits).
     ///
@@ -235,7 +258,6 @@ impl Bitvector {
         }
 
         let index = self.scan_blocks(0, self.n-1, Bit::ONE, i as u64);
-        println!("index:{}", index.0);
         if index.0 as usize == i {
             return index.1;
         }
@@ -274,7 +296,6 @@ impl Bitvector {
         }
 
         let index = self.scan_blocks(0, self.n-1, Bit::ZERO, i as u64);
-        println!("index:{}", index.0);
         if index.0 as usize == i {
             return index.1;
         }
@@ -332,9 +353,9 @@ impl Bitvector {
     /// assert_eq!(bv.scan_blocks(2, bv.len()-1, Bit::ONE, 2), (2,5));
     /// ```
     pub fn scan_blocks(&self, start: usize, stop: usize, bit_type: Bit, limit: u64) -> (u64, usize) {
-        if start >= self.n || stop > self.n || stop < start {
-            panic!(">> Error with range values.
-                   Start:{}, Stop:{}, length of blocks:{}", start, stop, self.n);
+        if start >= self.n || stop >= self.n || stop < start {
+            panic!(">> [Bitvector::scan_blocks error] Error with range values. \
+                   Start:{}, Stop:{}, length of bitvector:{}", start, stop, self.n);
         }
 
         let mut count: u64 = 0;
