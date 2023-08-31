@@ -2,7 +2,7 @@ use std::vec::Vec;
 use rand::{Rng, thread_rng};
 
 use crate::rank_support::RankSupport;
-use crate::bitvectors::Bitvector;
+use crate::bitvectors::{Bitvector, Bit};
 
 
 // fn: new
@@ -264,5 +264,134 @@ fn new_build_random() {
         let v: Vec<u32> = (0..n).map(|_| rng.gen_range(0..=1)).collect();
 
         let _rs = RankSupport::new(Bitvector::build_from_vec2(&v));
+    }
+}
+
+// fn: rank1
+#[test]
+fn rs_rank1_simple() {
+    let a: [u32; 7] = [0,1,0,0,1,1,0];
+    let bv = Bitvector::build(&a);
+    let rs = RankSupport::new(bv);
+
+    let result: [u64; 7] = [0,1,1,1,2,3,3];
+
+    for i in 0..7 {
+        let rs_rank1 = rs.rank1(i);
+        assert_eq!(
+            rs_rank1,
+            result[i],
+            "\n>> Error at index: {},\nrank1(i,bv): {},\ncorrect: {}\n",
+            i,
+            rs_rank1,
+            result[i]
+        );
+    }
+}
+
+// fn: rank1
+#[test]
+fn rs_rank1_zeros() {
+    let bv = Bitvector::build_empty(300);
+    let rs = RankSupport::new(bv);
+
+    for i in 0..rs.bv.len() {
+        let rs_rank1 = rs.rank1(i);
+        assert_eq!(
+            rs_rank1,
+            0,
+            "\n>> Error at index: {},\nrank1(i,bv): {},\ncorrect: {}\n",
+            i,
+            rs_rank1,
+            0
+        );
+    }
+}
+
+// fn: rank1
+#[test]
+fn rs_rank1_ones() {
+    let mut bv = Bitvector::build_empty(300);
+    for i in 0..bv.len() {
+        bv.set(i, Bit::ONE);
+    }
+    let rs = RankSupport::new(bv);
+
+    for i in 0..rs.bv.len() {
+        let j = i as u64;
+        let rank1 = rs.rank1(i);
+        assert_eq!(
+            rank1,
+            j+1,
+            "\n>> Error at index: {},\nrank1(i,bv): {},\ncorrect: {}\n",
+            i,
+            rank1,
+            j+1
+        );
+    }
+}
+
+// fn: rank1
+#[test]
+fn rs_rank1_random1() {
+    let mut rng = thread_rng();
+    let n: usize = rng.gen_range(10..=20);
+    let v: Vec<u64> = (0..n).map(|_| rng.gen_range(0..u64::MAX)).collect();
+    let bv = Bitvector::build_from_vec(&v);
+    let mut result: Vec<u64> = vec![0; n*64];
+    let mut ones = 0;
+    for k in 0..bv.len() {
+        if bv.get(k) == 1 {
+            ones += 1;
+        }
+        result[k] = ones;
+    }
+
+    let rs = RankSupport::new(bv);
+
+
+    for k in 0..rs.bv.len() {
+        let rank1 = rs.rank1(k);
+        assert_eq!(
+            rank1,
+            result[k],
+            "\n>> Error at index: {},\nrank1(i,bv): {},\ncorrect: {}\n",
+            k,
+            rank1,
+            result[k]
+        );
+    }
+}
+
+// fn: rank1
+#[test]
+fn rs_rank1_random2() {
+    let mut rng = thread_rng();
+    let n: usize = rng.gen_range(50..=60);
+    let v: Vec<u64> = (0..n).map(|_| rng.gen_range(0..u64::MAX)).collect();
+    let bv = Bitvector::build_from_vec(&v);
+
+    let mut result: Vec<u64> = vec![0; n*64];
+    let mut ones = 0;
+    for k in 0..bv.len() {
+        if bv.get(k) == 1 {
+            ones += 1;
+        }
+        result[k] = ones;
+    }
+
+    let rs = RankSupport::new(bv);
+
+
+    for k in 0..rs.bv.len() {
+        let rank1 = rs.rank1(k);
+        assert_eq!(
+            rank1,
+            result[k],
+            "\n>> Error at index: {},\nrank1(i,bv): {},\ncorrect: {}\n",
+            k,
+            rank1,
+            result[k]
+        );
     }
 }

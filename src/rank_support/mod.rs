@@ -80,6 +80,41 @@ impl RankSupport {
     pub fn get_block_level2(&self) -> &Vec<u64> {
         &self.block_level2
     }
+
+    /// Returns numbers of 1s in O(1) time from the bitvector in range `[0,i]`.
+    ///
+    /// ```
+    /// use std::panic;
+    /// use halko_rust::bitvectors::Bitvector;
+    /// use halko_rust::rank_support::RankSupport;
+    ///
+    /// let a: [u32; 7] = [0,1,0,0,1,1,0];
+    /// let bv = Bitvector::build(&a);
+    /// let rs = RankSupport::new(bv);
+    ///
+    /// assert_eq!(rs.rank1(0), 0);
+    /// assert_eq!(rs.rank1(1), 1);
+    /// assert_eq!(rs.rank1(2), 1);
+    /// assert_eq!(rs.rank1(6), 3);
+    ///
+    /// let panic_result = panic::catch_unwind(|| {
+    ///     rs.rank1(7)
+    /// });
+    /// assert!(panic_result.is_err());
+    /// ```
+    pub fn rank1(&self, i: usize) -> u64 {
+
+        //println!("i:{}, {}, {}, {}, {}, {}", i, self._block_level1.len(), self._b1_size, i/self._b1_size, self._block_level2.len(), i/self._b2_size);
+        let k1 = if self.b1 == 0 {0} else {i/self.b1};
+        let b1_sum = self.block_level1[k1];
+
+        let k2 = if self.b2 == 0 {0} else {i/self.b2};
+        let b2_sum = self.block_level2[k2];
+
+        let scan_sum = self.bv.scan_blocks(k2*self.b2, i, Bit::ONE, u64::MAX).0;
+        //println!("b1:{}, b2:{}, scan_sum: {}", b1_sum, b2_sum, scan_sum);
+
+        b1_sum+b2_sum+scan_sum
     }
 
 }
