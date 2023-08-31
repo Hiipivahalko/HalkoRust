@@ -4,6 +4,13 @@ use crate::bitvectors::{Bitvector, Bit};
 #[cfg(test)]
 mod tests;
 
+/// Succint rank support for bitvector, that allows O(1) time rank query for the bitvector.
+/// The structure consist of two level precomputed rank results.
+/// First block level stores rank results for indicies `[b1, 2*b1, ... , (|bv|/b1)*b1]` from the bitvector `bv`.
+/// The value `b1` is computed by `b1=(log_2(|bv|)^2`.
+///
+/// The second level computes relative rank values between two blocks in the first block level.
+/// Such that `block_level2[i] = rank1(bv, i*b2) - block_level1[i*b2/b1]`, where `b2=log_2(|bv|)`.
 pub struct RankSupport {
     bv: Bitvector,
     _block_level1: Vec<u64>,
