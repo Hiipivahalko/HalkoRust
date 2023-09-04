@@ -38,12 +38,17 @@ impl IntVector {
 
     pub fn set(&mut self, i: usize, new_val: u64) {
         if new_val > 0 && new_val.ilog2() as usize > self.l {
-            panic!("[IntVector], Error setting new value into IntVector, new value is too large. \
+            panic!("[IntVector::set], Error setting new value into IntVector, new value is too large. \
                    new value: {}, largest valid value: {}.",
                    new_val, self.l.pow(2)-1);
         }
 
         let k = (i*self.l)/64;
+
+        if i >= self.n {
+            panic!("[IntVector::set], Index out of bounds, i:{}, IntVector length:{}",
+                   i, self.n);
+        }
 
         if self.l == 64 {
             self.data[k] = new_val;

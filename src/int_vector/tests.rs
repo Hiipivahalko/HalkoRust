@@ -216,3 +216,12 @@ fn set_try_to_set_too_large_value() {
 
     iv.set(0, 64);
 }
+
+// fn: set
+#[test]
+#[should_panic]
+fn set_index_out_of_bounds() {
+    let mut iv = IntVector::new(2, 5); // data.len == 3
+
+    iv.set(2, 63);
+}
