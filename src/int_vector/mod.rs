@@ -3,6 +3,7 @@ use std::vec::Vec;
 #[cfg(test)]
 mod tests;
 
+/// Compact integer vector structure. Stores each value in the vector using `l` bits.
 #[derive(Debug)]
 pub struct IntVector {
     l: usize, // size of max value in bits
