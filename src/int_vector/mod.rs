@@ -80,4 +80,56 @@ impl IntVector {
         }
 
     }
+
+    /// Returns the `i`-th value in the `IntVector`
+    ///
+    /// ```
+    /// use halko_rust::int_vector::IntVector;
+    ///
+    /// let mut iv = IntVector::new(5, 8);
+    ///
+    /// assert_eq!(iv.get(0), 0);
+    /// iv.set(0, 12);
+    /// assert_eq!(iv.get(0), 12);
+    ///
+    /// iv.set(2, 1);
+    /// iv.set(3, 0);
+    /// iv.set(4, 2);
+    ///
+    /// assert_eq!(iv.get(2), 1);
+    /// assert_eq!(iv.get(3), 0);
+    /// assert_eq!(iv.get(4), 2);
+    /// ```
+    pub fn get(&self, i: usize) -> u64 {
+
+        if i >= self.n {
+            panic!("[IntVector::set], Index out of bounds, i:{}, IntVector length:{}",
+                   i, self.n);
+        }
+
+        let k = (i*self.l)/64;
+
+        if self.l == 64 {
+            return self.data[k];
+        }
+
+        let loc_i = (i*self.l)%64;
+
+        // value completely inside the block
+        if loc_i + self.l <= 64 {
+            return (self.data[k] >> loc_i) & !(u64::MAX << self.l);
+        }
+
+        let right_part = self.data[k] >> loc_i;
+        let left_part = !(u64::MAX << ((loc_i+self.l)%64)) & self.data[k+1];
+        (left_part << (64-loc_i)) | right_part
+    }
+
+    pub fn len(&self) -> usize {
+        self.n
+    }
+
+    pub fn get_data(&self) -> &Vec<u64> {
+        &self.data
+    }
 }

@@ -1,3 +1,6 @@
+use std::vec::Vec;
+use rand::{Rng, thread_rng};
+
 use crate::int_vector::IntVector;
 
 // fn: new
@@ -224,4 +227,131 @@ fn set_index_out_of_bounds() {
     let mut iv = IntVector::new(2, 5); // data.len == 3
 
     iv.set(2, 63);
+}
+
+// fn: get
+#[test]
+fn get_l_64() {
+    let mut iv = IntVector::new(10, 64);
+
+    for i in 0..iv.len() {
+        assert_eq!(iv.get(i), 0);
+    }
+
+
+    for i in 0..iv.len() {
+        iv.set(i, u64::MAX);
+        assert_eq!(iv.get(i), u64::MAX);
+    }
+
+    for i in 0..iv.len() {
+        iv.set(i, 0);
+        assert_eq!(iv.get(i), 0);
+    }
+}
+
+// fn: get
+#[test]
+fn get_l_4_to_max_all_values_inside_same_block() {
+    let mut iv = IntVector::new(32, 4); // data.len == 2
+
+    for i in 0..32 {
+        iv.set(i, 15);
+        let res = 15;
+
+        assert_eq!(iv.get(i), res,
+                   "Error when i:{}", i
+                   );
+    }
+
+    for i in 0..32 {
+        iv.set(i, 0);
+        let res = 0;
+
+        assert_eq!(iv.get(i), res,
+                   "Error when i:{}", i
+                   );
+    }
+}
+
+// fn: get
+#[test]
+fn get_l_5_to_max_all_values_overlap_blocks() {
+    let mut iv = IntVector::new(39, 5); // data.len == 3
+
+    // set block values to max -> set bits on (1) in every block.
+    for i in 0..39 {
+        iv.set(i, 31);
+        let res = 31;
+
+        assert_eq!(iv.get(i), res,
+                   "Error when i:{}", i
+                   );
+    }
+
+    // set block values to min -> set bits off (0) in every block.
+    for i in 0..39 {
+        iv.set(i, 0);
+        let res = 0;
+
+        assert_eq!(iv.get(i), res,
+                   "Error when i:{}", i
+                   );
+    }
+}
+
+// fn: get
+#[test]
+fn get_l_small_random() {
+    for l in 4..=16 {
+        let mut rng = thread_rng();
+
+        let n = rng.gen_range(200..=300);
+        let mut iv = IntVector::new(n, l);
+
+        let res: Vec<u64> = (0..n).map(|_| rng.gen_range(0..l.pow(2)) as u64).collect();
+
+        for (i,v) in res.iter().enumerate() {
+            iv.set(i, *v);
+        }
+
+        for i in 0..iv.len() {
+            let get_res = iv.get(i);
+            assert_eq!(get_res, res[i],
+                       "Error when l:{}, n:{}", l, n);
+        }
+
+    }
+}
+
+// fn: get
+#[test]
+fn get_l_large_random() {
+    for l in 32..=64 {
+        let mut rng = thread_rng();
+
+        let n = rng.gen_range(200..=300);
+        let mut iv = IntVector::new(n, l);
+
+        let res: Vec<u64> = (0..n).map(|_| rng.gen_range(0..l.pow(2)) as u64).collect();
+
+        for (i,v) in res.iter().enumerate() {
+            iv.set(i, *v);
+        }
+
+        for i in 0..iv.len() {
+            let get_res = iv.get(i);
+            assert_eq!(get_res, res[i],
+                       "Error when l:{}, n:{}", l, n);
+        }
+
+    }
+}
+
+// fn: get
+#[test]
+#[should_panic]
+fn get_index_out_of_bounds() {
+    let iv = IntVector::new(2, 5);
+    let _res = iv.get(2);
 }
