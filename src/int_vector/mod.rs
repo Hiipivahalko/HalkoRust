@@ -53,6 +53,25 @@ impl IntVector {
         }
     }
 
+    /// Set new value `new_val` into the `i`-th value in the `IntVector`
+    ///
+    /// ```
+    /// use halko_rust::int_vector::IntVector;
+    ///
+    /// let mut iv = IntVector::new(5, 8);
+    ///
+    /// assert_eq!(iv.get(0), 0);
+    /// iv.set(0, 12);
+    /// assert_eq!(iv.get(0), 12);
+    ///
+    /// iv.set(2, 1);
+    /// iv.set(3, 0);
+    /// iv.set(4, 2);
+    ///
+    /// assert_eq!(iv.get(2), 1);
+    /// assert_eq!(iv.get(3), 0);
+    /// assert_eq!(iv.get(4), 2);
+    /// ```
     pub fn set(&mut self, i: usize, new_val: u64) {
         if new_val > 0 && new_val.ilog2() as usize > self.l {
             panic!("[IntVector::set], Error setting new value into IntVector, new value is too large. \
@@ -142,10 +161,43 @@ impl IntVector {
         (left_part << (64-loc_i)) | right_part
     }
 
+    /// Returns the length of the IntVector.
+    ///
+    /// ```
+    /// use halko_rust::int_vector::IntVector;
+    ///
+    /// let iv = IntVector::new(5, 8);
+    ///
+    /// assert_eq!(iv.len(), 5);
+    /// ```
     pub fn len(&self) -> usize {
         self.n
     }
 
+    /// Returns reference to the raw data of IntVector.
+    ///
+    /// ```
+    /// use halko_rust::int_vector::IntVector;
+    ///
+    /// let iv = IntVector::new(4, 32);
+    ///
+    /// let data = iv.get_data();
+    /// assert_eq!(data[0], 0);
+    /// assert_eq!(data[1], 0);
+    /// assert_eq!(data.len(), 2);
+    ///
+    /// let mut iv2 = IntVector::new(4, 32);
+    /// iv2.set(0, 2_u64.pow(32)-1);
+    /// iv2.set(1, 2_u64.pow(32)-1);
+    /// iv2.set(2, 2_u64.pow(32)-1);
+    /// iv2.set(3, 2_u64.pow(32)-1);
+    ///
+    /// let data2 = iv2.get_data();
+    ///
+    /// assert_eq!(data2[0], u64::MAX);
+    /// assert_eq!(data2[1], u64::MAX);
+    ///
+    /// ```
     pub fn get_data(&self) -> &Vec<u64> {
         &self.data
     }
