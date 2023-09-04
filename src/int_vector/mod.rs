@@ -4,6 +4,23 @@ use std::vec::Vec;
 mod tests;
 
 /// Compact integer vector structure. Stores each value in the vector using `l` bits.
+///
+/// ```
+/// use halko_rust::int_vector::IntVector;
+///
+/// let mut iv = IntVector::new(4, 8);
+///
+/// iv.set(1,1);
+/// iv.set(2,2);
+/// iv.set(3,3);
+///
+/// assert_eq!(iv.len(), 4);
+/// assert_eq!(iv.get(0), 0);
+/// assert_eq!(iv.get(1), 1);
+/// assert_eq!(iv.get(2), 2);
+/// assert_eq!(iv.get(3), 3);
+/// ```
+///
 #[derive(Debug)]
 pub struct IntVector {
     l: usize, // size of max value in bits
@@ -15,12 +32,12 @@ impl IntVector {
     /// Create new `IntVector` of size `n`, where each value is at most `2^l-1`
     ///
     /// ```
-    /// use create::int_vector::IntVector
+    /// use halko_rust::int_vector::IntVector;
     ///
     /// // [0,0,0,0]
     /// // data -> [0000000000000000000000000000000000000000000000000000|000|000|000|000]
     /// let iv = IntVector::new(4, 3);
-    /// assert_eq!(iv.data.len(), 1);
+    /// assert_eq!(iv.get_data().len(), 1);
     /// ```
     pub fn new(n: usize, l: usize) -> IntVector {
         if l > 64 || l == 0 {
