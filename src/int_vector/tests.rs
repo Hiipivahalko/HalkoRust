@@ -376,3 +376,47 @@ fn print_small() {
         assert_eq!(format!("{iv}"), "[7,0,1,2,0,]");
     }
 }
+
+// fn: Clone, PartialEq
+#[test]
+fn copy_empty() {
+    for l in 1..=64 {
+        let iv = IntVector::new(0, l);
+        let iv_copy = iv.clone();
+        assert_eq!(iv, iv_copy);
+    }
+}
+
+// fn: Clone, PartialEq
+#[test]
+fn copy_filled_with_max_values() {
+    for l in 1..=64 {
+        let mut iv = IntVector::new(5, l);
+        iv.set(0, if l != 64 {!(u64::MAX << l)} else {u64::MAX});
+        iv.set(1, if l != 64 {!(u64::MAX << l)} else {u64::MAX});
+        iv.set(2, if l != 64 {!(u64::MAX << l)} else {u64::MAX});
+        iv.set(3, if l != 64 {!(u64::MAX << l)} else {u64::MAX});
+        iv.set(4, if l != 64 {!(u64::MAX << l)} else {u64::MAX});
+        let iv_copy = iv.clone();
+        assert_eq!(iv, iv_copy);
+    }
+}
+
+// fn: Copy, PartialEq
+#[test]
+fn copy_and_mut_not_equal() {
+    for l in 1..=64 {
+        let iv = IntVector::new(5, l);
+        let mut iv_copy = iv.clone();
+        iv_copy.set(0, if l != 64 {!(u64::MAX << l)} else {u64::MAX});
+        assert_ne!(iv, iv_copy);
+    }
+}
+
+// fn: PartialEq
+#[test]
+fn eq_with_different_l_not_equal() {
+    let iv1 = IntVector::new(0,2);
+    let iv2 = IntVector::new(0,7);
+    assert_ne!(iv1, iv2);
+}

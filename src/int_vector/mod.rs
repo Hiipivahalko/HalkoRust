@@ -22,7 +22,7 @@ mod tests;
 /// assert_eq!(iv.get(3), 3);
 /// ```
 ///
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct IntVector {
     l: usize, // size of max value in bits
     data: Vec<u64>,
