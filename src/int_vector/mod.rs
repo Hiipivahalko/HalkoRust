@@ -1,3 +1,4 @@
+use std::fmt;
 use std::vec::Vec;
 
 #[cfg(test)]
@@ -200,5 +201,17 @@ impl IntVector {
     /// ```
     pub fn get_data(&self) -> &Vec<u64> {
         &self.data
+    }
+}
+
+impl fmt::Display for IntVector {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut res = "[".to_string();
+        for i in 0..self.n {
+            res.push_str(self.get(i).to_string().as_str());
+            res.push(',');
+        }
+        res.push(']');
+        write!(f, "{}", res)
     }
 }

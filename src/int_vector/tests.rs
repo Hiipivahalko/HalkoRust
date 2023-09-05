@@ -355,3 +355,24 @@ fn get_index_out_of_bounds() {
     let iv = IntVector::new(2, 5);
     let _res = iv.get(2);
 }
+
+// fn: Display
+#[test]
+fn print_empty() {
+    let iv = IntVector::new(0,15);
+    assert_eq!(format!("{iv}"), "[]");
+}
+
+// fn: Display
+#[test]
+fn print_small() {
+    for l in 4..=64 {
+        let mut iv = IntVector::new(5,l);
+        iv.set(0, 7);
+        iv.set(2, 1);
+        iv.set(3, 2);
+
+
+        assert_eq!(format!("{iv}"), "[7,0,1,2,0,]");
+    }
+}
