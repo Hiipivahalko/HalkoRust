@@ -1,3 +1,4 @@
+use std::fmt;
 use std::vec::Vec;
 
 #[cfg(test)]
@@ -21,7 +22,7 @@ mod tests;
 /// assert_eq!(iv.get(3), 3);
 /// ```
 ///
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct IntVector {
     l: usize, // size of max value in bits
     data: Vec<u64>,
@@ -200,5 +201,17 @@ impl IntVector {
     /// ```
     pub fn get_data(&self) -> &Vec<u64> {
         &self.data
+    }
+}
+
+impl fmt::Display for IntVector {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut res = "[".to_string();
+        for i in 0..self.n {
+            res.push_str(self.get(i).to_string().as_str());
+            res.push(',');
+        }
+        res.push(']');
+        write!(f, "{}", res)
     }
 }
