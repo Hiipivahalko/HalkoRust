@@ -3,6 +3,7 @@ use rand::{Rng, thread_rng};
 
 use crate::rank_support::RankSupport;
 use crate::bitvectors::{Bitvector, Bit};
+use crate::int_vector::IntVector;
 
 
 // fn: new
@@ -13,7 +14,10 @@ fn new_bv64_ones() {
 
     let rs = RankSupport::new(Bitvector::build_from_vec(&v));
 
-    let res_level1: Vec<u64> = vec![0,36];
+    //let res_level1: Vec<u64> = vec![0,36];
+    let mut res_level1 = IntVector::new(2,6);
+    res_level1.set(0, 0);
+    res_level1.set(1, 36);
     let res_level2: Vec<u64> = vec![
                                     0,6,12,18,24,30,
                                     0,6,12,18,24,
@@ -31,7 +35,11 @@ fn new_bv128_ones() {
 
     let rs = RankSupport::new(Bitvector::build_from_vec(&v));
 
-    let res_level1: Vec<u64> = vec![0,49,98];
+    //let res_level1: Vec<u64> = vec![0,49,98];
+    let mut res_level1 = IntVector::new(3,7);
+    res_level1.set(0, 0);
+    res_level1.set(1, 49);
+    res_level1.set(2, 98);
     let res_level2: Vec<u64> = vec![
                                     0,7,14,21,28,35,42,
                                     0,7,14,21,28,35,42,
@@ -50,7 +58,12 @@ fn new_bv192_ones() {
 
     let rs = RankSupport::new(Bitvector::build_from_vec(&v));
 
-    let res_level1: Vec<u64> = vec![0,49,98,147];
+    //let res_level1: Vec<u64> = vec![0,49,98,147];
+    let mut res_level1 = IntVector::new(4,8);
+    res_level1.set(0, 0);
+    res_level1.set(1, 49);
+    res_level1.set(2, 98);
+    res_level1.set(3, 147);
     let res_level2: Vec<u64> = vec![
                                     0,7,14,21,28,35,42,
                                     0,7,14,21,28,35,42,
@@ -70,7 +83,12 @@ fn new_bv256_ones() {
 
     let rs = RankSupport::new(Bitvector::build_from_vec(&v));
 
-    let res_level1: Vec<u64> = vec![0,64,128,192];
+    //let res_level1: Vec<u64> = vec![0,64,128,192];
+    let mut res_level1 = IntVector::new(4,8);
+    res_level1.set(0, 0);
+    res_level1.set(1, 64);
+    res_level1.set(2, 128);
+    res_level1.set(3, 192);
     let res_level2: Vec<u64> = vec![0,8, 16, 24, 32, 40, 48, 56,
                                     0,8, 16, 24, 32, 40, 48, 56,
                                     0,8, 16, 24, 32, 40, 48, 56,
@@ -88,7 +106,8 @@ fn new_bv64_zeros() {
 
     let rs = RankSupport::new(Bitvector::build_from_vec(&v));
 
-    let res_level1: Vec<u64> = vec![0,0];
+    //let res_level1: Vec<u64> = vec![0,0];
+    let res_level1 = IntVector::new(2,1);
     let res_level2: Vec<u64> = vec![
                                     0,0,0,0,0,0,
                                     0,0,0,0,0,
@@ -106,7 +125,8 @@ fn new_bv128_zeros() {
 
     let rs = RankSupport::new(Bitvector::build_from_vec(&v));
 
-    let res_level1: Vec<u64> = vec![0,0,0];
+    //let res_level1: Vec<u64> = vec![0,0,0];
+    let res_level1 = IntVector::new(3,1);
     let res_level2: Vec<u64> = vec![
                                     0,0,0,0,0,0,0,
                                     0,0,0,0,0,0,0,
@@ -125,7 +145,8 @@ fn new_bv192_zeros() {
 
     let rs = RankSupport::new(Bitvector::build_from_vec(&v));
 
-    let res_level1: Vec<u64> = vec![0,0,0,0];
+    //let res_level1: Vec<u64> = vec![0,0,0,0];
+    let res_level1 = IntVector::new(4,1);
     let res_level2: Vec<u64> = vec![
                                     0,0,0,0,0,0,0,
                                     0,0,0,0,0,0,0,
@@ -145,7 +166,8 @@ fn new_bv256_zeros() {
 
     let rs = RankSupport::new(Bitvector::build_from_vec(&v));
 
-    let res_level1: Vec<u64> = vec![0,0,0,0];
+    //let res_level1: Vec<u64> = vec![0,0,0,0];
+    let res_level1 = IntVector::new(4,1);
     let res_level2: Vec<u64> = vec![
                                     0,0,0,0,0,0,0,0,
                                     0,0,0,0,0,0,0,0,
@@ -168,7 +190,10 @@ fn new_bv64_mixed() {
 
     let rs = RankSupport::new(Bitvector::build(&a));
 
-    let res_level1: Vec<u64> = vec![0,36];
+    //let res_level1: Vec<u64> = vec![0,36];
+    let mut res_level1 = IntVector::new(2,6);
+    res_level1.set(0, 0);
+    res_level1.set(1, 36);
     let res_level2: Vec<u64> = vec![
                                     0,6,12,18,24,30,
                                     0,0,0,0,0,
@@ -190,7 +215,11 @@ fn new_bv128_mixed() {
 
     let rs = RankSupport::new(Bitvector::build(&a));
 
-    let res_level1: Vec<u64> = vec![0,49,49];
+    //let res_level1: Vec<u64> = vec![0,49,49];
+    let mut res_level1 = IntVector::new(3,6);
+    res_level1.set(0, 0);
+    res_level1.set(1, 49);
+    res_level1.set(2, 49);
     let res_level2: Vec<u64> = vec![
                                     0,7,14,21,28,35,42,
                                     0,0,0,0,0,0,0,
@@ -213,7 +242,12 @@ fn new_bv192_mixed() {
 
     let rs = RankSupport::new(Bitvector::build(&a));
 
-    let res_level1: Vec<u64> = vec![0,49,49,98];
+    //let res_level1: Vec<u64> = vec![0,49,49,98];
+    let mut res_level1 = IntVector::new(4,7);
+    res_level1.set(0, 0);
+    res_level1.set(1, 49);
+    res_level1.set(2, 49);
+    res_level1.set(3, 98);
     let res_level2: Vec<u64> = vec![
                                     0,7,14,21,28,35,42,
                                     0,0,0,0,0,0,0,
@@ -236,7 +270,12 @@ fn new_bv256_mixed() {
 
     let rs = RankSupport::new(Bitvector::build(&a));
 
-    let res_level1: Vec<u64> = vec![0,64,64,128];
+    //let res_level1: Vec<u64> = vec![0,64,64,128];
+    let mut res_level1 = IntVector::new(4,8);
+    res_level1.set(0, 0);
+    res_level1.set(1, 64);
+    res_level1.set(2, 64);
+    res_level1.set(3, 128);
     let res_level2: Vec<u64> = vec![0,8,16,24,32,40,48,56,
                                     0,0,0,0,0,0,0,0,
                                     0,8,16,24,32,40,48,56,

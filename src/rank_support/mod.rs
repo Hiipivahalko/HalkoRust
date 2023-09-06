@@ -1,5 +1,6 @@
 use std::vec::Vec;
 use crate::bitvectors::{Bitvector, Bit};
+use crate::int_vector::IntVector;
 
 #[cfg(test)]
 mod tests;
@@ -13,7 +14,7 @@ mod tests;
 /// Such that `block_level2[i] = rank1(bv, i*b2) - block_level1[i*b2/b1]`, where `b2=log_2(|bv|)`.
 pub struct RankSupport {
     bv: Bitvector,
-    block_level1: Vec<u64>,
+    block_level1: IntVector,
     block_level2: Vec<u64>,
     b1: usize,
     b2: usize,
@@ -30,8 +31,11 @@ impl RankSupport {
 
         let b1_n = if b1 == 0 {1} else {(bv.len()+b1-1)/b1}; // ceil(bv.len()/b1)
         let b2_n = if b2 == 0 {1} else {(bv.len()+b2-1)/b2}; // ceil(bv.len()/b2)
+                                                             //
+        let rank_last = bv.rank1(b1*(b1_n-1));
+        let l = 64-rank_last.leading_zeros() as usize;
 
-        let mut v1 = vec![0; b1_n];
+        let mut v1 = IntVector::new(b1_n, if l == 0 {1} else {l});
         let mut v2 = vec![0; b2_n];
 
         // first block_level2 values inside first value in block_level1
@@ -47,7 +51,7 @@ impl RankSupport {
         }
 
         for i in 1..b1_n {
-            v1[i] = v1[i-1] + bv.scan_blocks((i-1)*b1, i*b1-1, Bit::ONE, u64::MAX).0;
+            v1.set(i, v1.get(i-1) + bv.scan_blocks((i-1)*b1, i*b1-1, Bit::ONE, u64::MAX).0);
 
 
             let k = if i*b1 + b1 <= bv.len() {b1/b2} else {((bv.len()%b1)+b2-1)/b2};
@@ -73,7 +77,7 @@ impl RankSupport {
         &self.bv
     }
 
-    pub fn get_block_level1(&self) -> &Vec<u64> {
+    pub fn get_block_level1(&self) -> &IntVector {
         &self.block_level1
     }
 
@@ -106,7 +110,7 @@ impl RankSupport {
 
         //println!("i:{}, {}, {}, {}, {}, {}", i, self._block_level1.len(), self._b1_size, i/self._b1_size, self._block_level2.len(), i/self._b2_size);
         let k1 = if self.b1 == 0 {0} else {i/self.b1};
-        let b1_sum = self.block_level1[k1];
+        let b1_sum = self.block_level1.get(k1);
 
         let k2 = if self.b2 == 0 {0} else {i/self.b2};
         let b2_sum = self.block_level2[k2];
