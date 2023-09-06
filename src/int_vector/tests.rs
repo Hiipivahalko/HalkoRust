@@ -356,6 +356,23 @@ fn get_index_out_of_bounds() {
     let _res = iv.get(2);
 }
 
+// fn: set, get
+#[test]
+fn set_get_small() {
+    let mut iv = IntVector::new(4,8);
+    iv.set(0, 0);
+    iv.set(1, 64);
+    iv.set(2, 128);
+    iv.set(3, 192);
+
+    let mut iv2 = IntVector::new(4,8);
+    iv2.set(1, iv2.get(0)+64);
+    iv2.set(2, iv2.get(1)+64);
+    iv2.set(3, iv2.get(2)+64);
+
+    assert_eq!(iv, iv2);
+}
+
 // fn: Display
 #[test]
 fn print_empty() {
