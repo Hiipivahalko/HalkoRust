@@ -456,6 +456,20 @@ fn new_build_random() {
     }
 }
 
+// fn: new
+#[test]
+fn new_last_block_full_in_bl2() {
+    let v = vec![0,0,0,0,0,0,0,0,0,0,0,0,1,1];
+    let bv = Bitvector::build_from_vec2(&v);
+    let rs = RankSupport::new(bv);
+
+    let res_level1 = IntVector::new(2, 1);
+    let res_level2 = IntVector::new(5, 1);
+
+    assert_eq!(*rs.get_block_level1(), res_level1, "Error with block_level1");
+    assert_eq!(*rs.get_block_level2(), res_level2, "Error with block_level2");
+}
+
 // fn: rank1
 #[test]
 fn rs_rank1_simple() {
