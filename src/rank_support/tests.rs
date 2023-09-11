@@ -18,10 +18,22 @@ fn new_bv64_ones() {
     let mut res_level1 = IntVector::new(2,6);
     res_level1.set(0, 0);
     res_level1.set(1, 36);
-    let res_level2: Vec<u64> = vec![
-                                    0,6,12,18,24,30,
-                                    0,6,12,18,24,
-                                ];
+    //let res_level2: Vec<u64> = vec![
+    //                                0,6,12,18,24,30,
+    //                                0,6,12,18,24,
+    //                            ];
+    let mut res_level2 = IntVector::new(11, 5);
+    res_level2.set(0, 0);
+    res_level2.set(1, 6);
+    res_level2.set(2, 12);
+    res_level2.set(3, 18);
+    res_level2.set(4, 24);
+    res_level2.set(5, 30);
+    res_level2.set(6, 0);
+    res_level2.set(7, 6);
+    res_level2.set(8, 12);
+    res_level2.set(9, 18);
+    res_level2.set(10, 24);
 
     assert_eq!(*rs.get_block_level1(), res_level1);
     assert_eq!(*rs.get_block_level2(), res_level2);
@@ -40,11 +52,31 @@ fn new_bv128_ones() {
     res_level1.set(0, 0);
     res_level1.set(1, 49);
     res_level1.set(2, 98);
-    let res_level2: Vec<u64> = vec![
-                                    0,7,14,21,28,35,42,
-                                    0,7,14,21,28,35,42,
-                                    0,7,14,21,28,
-                                ];
+    //let res_level2: Vec<u64> = vec![
+    //                                0,7,14,21,28,35,42,
+    //                                0,7,14,21,28,35,42,
+    //                                0,7,14,21,28,
+    //                            ];
+    let mut res_level2 = IntVector::new(19, 6);
+    res_level2.set(0, 0);
+    res_level2.set(1, 7);
+    res_level2.set(2, 14);
+    res_level2.set(3, 21);
+    res_level2.set(4, 28);
+    res_level2.set(5, 35);
+    res_level2.set(6, 42);
+    res_level2.set(7, 0);
+    res_level2.set(8, 7);
+    res_level2.set(9, 14);
+    res_level2.set(10, 21);
+    res_level2.set(11, 28);
+    res_level2.set(12, 35);
+    res_level2.set(13, 42);
+    res_level2.set(14, 0);
+    res_level2.set(15, 7);
+    res_level2.set(16, 14);
+    res_level2.set(17, 21);
+    res_level2.set(18, 28);
 
     assert_eq!(*rs.get_block_level1(), res_level1);
     assert_eq!(*rs.get_block_level2(), res_level2);
@@ -64,12 +96,41 @@ fn new_bv192_ones() {
     res_level1.set(1, 49);
     res_level1.set(2, 98);
     res_level1.set(3, 147);
-    let res_level2: Vec<u64> = vec![
-                                    0,7,14,21,28,35,42,
-                                    0,7,14,21,28,35,42,
-                                    0,7,14,21,28,35,42,
-                                    0,7,14,21,28,35,42
-                                ];
+    //let res_level2: Vec<u64> = vec![
+    //                                0,7,14,21,28,35,42,
+    //                                0,7,14,21,28,35,42,
+    //                                0,7,14,21,28,35,42,
+    //                                0,7,14,21,28,35,42
+    //                            ];
+    let mut res_level2 = IntVector::new(28, 6);
+    res_level2.set(0, 0);
+    res_level2.set(1, 7);
+    res_level2.set(2, 14);
+    res_level2.set(3, 21);
+    res_level2.set(4, 28);
+    res_level2.set(5, 35);
+    res_level2.set(6, 42);
+    res_level2.set(7, 0);
+    res_level2.set(8, 7);
+    res_level2.set(9, 14);
+    res_level2.set(10, 21);
+    res_level2.set(11, 28);
+    res_level2.set(12, 35);
+    res_level2.set(13, 42);
+    res_level2.set(14, 0);
+    res_level2.set(15, 7);
+    res_level2.set(16, 14);
+    res_level2.set(17, 21);
+    res_level2.set(18, 28);
+    res_level2.set(19, 35);
+    res_level2.set(20, 42);
+    res_level2.set(21, 0);
+    res_level2.set(22, 7);
+    res_level2.set(23, 14);
+    res_level2.set(24, 21);
+    res_level2.set(25, 28);
+    res_level2.set(26, 35);
+    res_level2.set(27, 42);
 
     assert_eq!(*rs.get_block_level1(), res_level1);
     assert_eq!(*rs.get_block_level2(), res_level2);
@@ -89,10 +150,43 @@ fn new_bv256_ones() {
     res_level1.set(1, 64);
     res_level1.set(2, 128);
     res_level1.set(3, 192);
-    let res_level2: Vec<u64> = vec![0,8, 16, 24, 32, 40, 48, 56,
-                                    0,8, 16, 24, 32, 40, 48, 56,
-                                    0,8, 16, 24, 32, 40, 48, 56,
-                                    0,8, 16, 24, 32, 40, 48, 56];
+    //let res_level2: Vec<u64> = vec![0,8,16,24,32,40,48,56,
+    //                                0,8,16,24,32,40,48,56,
+    //                                0,8,16,24,32,40,48,56,
+    //                                0,8,16,24,32,40,48,56];
+    let mut res_level2 = IntVector::new(32, 6);
+    res_level2.set(0, 0);
+    res_level2.set(1, 8);
+    res_level2.set(2, 16);
+    res_level2.set(3, 24);
+    res_level2.set(4, 32);
+    res_level2.set(5, 40);
+    res_level2.set(6, 48);
+    res_level2.set(7, 56);
+    res_level2.set(8, 0);
+    res_level2.set(9, 8);
+    res_level2.set(10, 16);
+    res_level2.set(11, 24);
+    res_level2.set(12, 32);
+    res_level2.set(13, 40);
+    res_level2.set(14, 48);
+    res_level2.set(15, 56);
+    res_level2.set(16, 0);
+    res_level2.set(17, 8);
+    res_level2.set(18, 16);
+    res_level2.set(19, 24);
+    res_level2.set(20, 32);
+    res_level2.set(21, 40);
+    res_level2.set(22, 48);
+    res_level2.set(23, 56);
+    res_level2.set(24, 0);
+    res_level2.set(25, 8);
+    res_level2.set(26, 16);
+    res_level2.set(27, 24);
+    res_level2.set(28, 32);
+    res_level2.set(29, 40);
+    res_level2.set(30, 48);
+    res_level2.set(31, 56);
 
     assert_eq!(*rs.get_block_level1(), res_level1);
     assert_eq!(*rs.get_block_level2(), res_level2);
@@ -108,10 +202,11 @@ fn new_bv64_zeros() {
 
     //let res_level1: Vec<u64> = vec![0,0];
     let res_level1 = IntVector::new(2,1);
-    let res_level2: Vec<u64> = vec![
-                                    0,0,0,0,0,0,
-                                    0,0,0,0,0,
-                                ];
+    //let res_level2: Vec<u64> = vec![
+    //                                0,0,0,0,0,0,
+    //                                0,0,0,0,0,
+    //                            ];
+    let res_level2 = IntVector::new(11, 1);
 
     assert_eq!(*rs.get_block_level1(), res_level1);
     assert_eq!(*rs.get_block_level2(), res_level2);
@@ -127,11 +222,12 @@ fn new_bv128_zeros() {
 
     //let res_level1: Vec<u64> = vec![0,0,0];
     let res_level1 = IntVector::new(3,1);
-    let res_level2: Vec<u64> = vec![
-                                    0,0,0,0,0,0,0,
-                                    0,0,0,0,0,0,0,
-                                    0,0,0,0,0,
-                                ];
+    //let res_level2: Vec<u64> = vec![
+    //                                0,0,0,0,0,0,0,
+    //                                0,0,0,0,0,0,0,
+    //                                0,0,0,0,0,
+    //                            ];
+    let res_level2 = IntVector::new(19, 1);
 
     assert_eq!(*rs.get_block_level1(), res_level1);
     assert_eq!(*rs.get_block_level2(), res_level2);
@@ -147,12 +243,13 @@ fn new_bv192_zeros() {
 
     //let res_level1: Vec<u64> = vec![0,0,0,0];
     let res_level1 = IntVector::new(4,1);
-    let res_level2: Vec<u64> = vec![
-                                    0,0,0,0,0,0,0,
-                                    0,0,0,0,0,0,0,
-                                    0,0,0,0,0,0,0,
-                                    0,0,0,0,0,0,0,
-                                ];
+    //let res_level2: Vec<u64> = vec![
+    //                                0,0,0,0,0,0,0,
+    //                                0,0,0,0,0,0,0,
+    //                                0,0,0,0,0,0,0,
+    //                                0,0,0,0,0,0,0,
+    //                            ];
+    let res_level2 = IntVector::new(28, 1);
 
     assert_eq!(*rs.get_block_level1(), res_level1);
     assert_eq!(*rs.get_block_level2(), res_level2);
@@ -168,12 +265,13 @@ fn new_bv256_zeros() {
 
     //let res_level1: Vec<u64> = vec![0,0,0,0];
     let res_level1 = IntVector::new(4,1);
-    let res_level2: Vec<u64> = vec![
-                                    0,0,0,0,0,0,0,0,
-                                    0,0,0,0,0,0,0,0,
-                                    0,0,0,0,0,0,0,0,
-                                    0,0,0,0,0,0,0,0,
-                                ];
+    //let res_level2: Vec<u64> = vec![
+    //                                0,0,0,0,0,0,0,0,
+    //                                0,0,0,0,0,0,0,0,
+    //                                0,0,0,0,0,0,0,0,
+    //                                0,0,0,0,0,0,0,0,
+    //                            ];
+    let res_level2 = IntVector::new(32, 1);
 
     assert_eq!(*rs.get_block_level1(), res_level1);
     assert_eq!(*rs.get_block_level2(), res_level2);
@@ -194,10 +292,17 @@ fn new_bv64_mixed() {
     let mut res_level1 = IntVector::new(2,6);
     res_level1.set(0, 0);
     res_level1.set(1, 36);
-    let res_level2: Vec<u64> = vec![
-                                    0,6,12,18,24,30,
-                                    0,0,0,0,0,
-                                ];
+    //let res_level2: Vec<u64> = vec![
+    //                                0,6,12,18,24,30,
+    //                                0,0,0,0,0,
+    //                            ];
+    let mut res_level2 = IntVector::new(11, 5);
+    res_level2.set(0, 0);
+    res_level2.set(1, 6);
+    res_level2.set(2, 12);
+    res_level2.set(3, 18);
+    res_level2.set(4, 24);
+    res_level2.set(5, 30);
 
     assert_eq!(*rs.get_block_level1(), res_level1);
     assert_eq!(*rs.get_block_level2(), res_level2);
@@ -220,11 +325,24 @@ fn new_bv128_mixed() {
     res_level1.set(0, 0);
     res_level1.set(1, 49);
     res_level1.set(2, 49);
-    let res_level2: Vec<u64> = vec![
-                                    0,7,14,21,28,35,42,
-                                    0,0,0,0,0,0,0,
-                                    0,7,14,21,28,
-                                ];
+    //let res_level2: Vec<u64> = vec![
+    //                                0,7,14,21,28,35,42,
+    //                                0,0,0,0,0,0,0,
+    //                                0,7,14,21,28,
+    //                            ];
+    let mut res_level2 = IntVector::new(19, 6);
+    res_level2.set(0, 0);
+    res_level2.set(1, 7);
+    res_level2.set(2, 14);
+    res_level2.set(3, 21);
+    res_level2.set(4, 28);
+    res_level2.set(5, 35);
+    res_level2.set(6, 42);
+    res_level2.set(14, 0);
+    res_level2.set(15, 7);
+    res_level2.set(16, 14);
+    res_level2.set(17, 21);
+    res_level2.set(18, 28);
 
     assert_eq!(*rs.get_block_level1(), res_level1);
     assert_eq!(*rs.get_block_level2(), res_level2);
@@ -248,12 +366,27 @@ fn new_bv192_mixed() {
     res_level1.set(1, 49);
     res_level1.set(2, 49);
     res_level1.set(3, 98);
-    let res_level2: Vec<u64> = vec![
-                                    0,7,14,21,28,35,42,
-                                    0,0,0,0,0,0,0,
-                                    0,7,14,21,28,35,42,
-                                    0,0,0,0,0,0,0,
-                                ];
+    //let res_level2: Vec<u64> = vec![
+    //                                0,7,14,21,28,35,42,
+    //                                0,0,0,0,0,0,0,
+    //                                0,7,14,21,28,35,42,
+    //                                0,0,0,0,0,0,0,
+    //                            ];
+    let mut res_level2 = IntVector::new(28, 6);
+    res_level2.set(0, 0);
+    res_level2.set(1, 7);
+    res_level2.set(2, 14);
+    res_level2.set(3, 21);
+    res_level2.set(4, 28);
+    res_level2.set(5, 35);
+    res_level2.set(6, 42);
+    res_level2.set(14, 0);
+    res_level2.set(15, 7);
+    res_level2.set(16, 14);
+    res_level2.set(17, 21);
+    res_level2.set(18, 28);
+    res_level2.set(19, 35);
+    res_level2.set(20, 42);
 
     assert_eq!(*rs.get_block_level1(), res_level1);
     assert_eq!(*rs.get_block_level2(), res_level2);
@@ -276,10 +409,27 @@ fn new_bv256_mixed() {
     res_level1.set(1, 64);
     res_level1.set(2, 64);
     res_level1.set(3, 128);
-    let res_level2: Vec<u64> = vec![0,8,16,24,32,40,48,56,
-                                    0,0,0,0,0,0,0,0,
-                                    0,8,16,24,32,40,48,56,
-                                    0,0,0,0,0,0,0,0];
+    //let res_level2: Vec<u64> = vec![0,8,16,24,32,40,48,56,
+    //                                0,0,0,0,0,0,0,0,
+    //                                0,8,16,24,32,40,48,56,
+    //                                0,0,0,0,0,0,0,0];
+    let mut res_level2 = IntVector::new(32, 6);
+    res_level2.set(0, 0);
+    res_level2.set(1, 8);
+    res_level2.set(2, 16);
+    res_level2.set(3, 24);
+    res_level2.set(4, 32);
+    res_level2.set(5, 40);
+    res_level2.set(6, 48);
+    res_level2.set(7, 56);
+    res_level2.set(16, 0);
+    res_level2.set(17, 8);
+    res_level2.set(18, 16);
+    res_level2.set(19, 24);
+    res_level2.set(20, 32);
+    res_level2.set(21, 40);
+    res_level2.set(22, 48);
+    res_level2.set(23, 56);
 
     assert_eq!(*rs.get_block_level1(), res_level1);
     assert_eq!(*rs.get_block_level2(), res_level2);
