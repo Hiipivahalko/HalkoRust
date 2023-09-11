@@ -1,5 +1,6 @@
 use std::vec::Vec;
 use crate::bitvectors::{Bitvector, Bit};
+use crate::int_vector::IntVector;
 
 #[cfg(test)]
 mod tests;
@@ -13,8 +14,8 @@ mod tests;
 /// Such that `block_level2[i] = rank1(bv, i*b2) - block_level1[i*b2/b1]`, where `b2=log_2(|bv|)`.
 pub struct RankSupport {
     bv: Bitvector,
-    block_level1: Vec<u64>,
-    block_level2: Vec<u64>,
+    block_level1: IntVector,
+    block_level2: IntVector,
     b1: usize,
     b2: usize,
 }
@@ -26,13 +27,18 @@ impl RankSupport {
         let b1 = if b1 > bv.len() {0} else {b1}; // this happens only with low
                                                  // values
         let b2 = bv.len().ilog2() as usize;
-        //println!("b1:{}, b2:{}", b1, b2);
 
         let b1_n = if b1 == 0 {1} else {(bv.len()+b1-1)/b1}; // ceil(bv.len()/b1)
         let b2_n = if b2 == 0 {1} else {(bv.len()+b2-1)/b2}; // ceil(bv.len()/b2)
 
-        let mut v1 = vec![0; b1_n];
+        // finding length of block_level1
+        let rank_last = bv.rank1(b1*(b1_n-1));
+        let l1 = 64-rank_last.leading_zeros() as usize;
+        let mut v1 = IntVector::new(b1_n, if l1 == 0 {1} else {l1});
+
+
         let mut v2 = vec![0; b2_n];
+
 
         // first block_level2 values inside first value in block_level1
         // if b2=0, then there are not block in level 2
@@ -47,7 +53,7 @@ impl RankSupport {
         }
 
         for i in 1..b1_n {
-            v1[i] = v1[i-1] + bv.scan_blocks((i-1)*b1, i*b1-1, Bit::ONE, u64::MAX).0;
+            v1.set(i, v1.get(i-1) + bv.scan_blocks((i-1)*b1, i*b1-1, Bit::ONE, u64::MAX).0);
 
 
             let k = if i*b1 + b1 <= bv.len() {b1/b2} else {((bv.len()%b1)+b2-1)/b2};
@@ -60,10 +66,23 @@ impl RankSupport {
             }
         }
 
+        // finding length  of v2 block
+        let v2_max = v2.iter().max();
+        let l2 = match v2_max {
+            Some(x) => if *x == 0 {1} else {64-x.leading_zeros() as usize},
+            None => 1,
+        };
+
+        let mut v2_iv = IntVector::new(v2.len(), l2);
+        for (i, x) in v2.iter().enumerate() {
+            v2_iv.set(i, *x);
+        }
+
+
         RankSupport {
             bv,
             block_level1: v1,
-            block_level2: v2,
+            block_level2: v2_iv,
             b1,
             b2,
         }
@@ -73,11 +92,11 @@ impl RankSupport {
         &self.bv
     }
 
-    pub fn get_block_level1(&self) -> &Vec<u64> {
+    pub fn get_block_level1(&self) -> &IntVector {
         &self.block_level1
     }
 
-    pub fn get_block_level2(&self) -> &Vec<u64> {
+    pub fn get_block_level2(&self) -> &IntVector {
         &self.block_level2
     }
 
@@ -106,10 +125,10 @@ impl RankSupport {
 
         //println!("i:{}, {}, {}, {}, {}, {}", i, self._block_level1.len(), self._b1_size, i/self._b1_size, self._block_level2.len(), i/self._b2_size);
         let k1 = if self.b1 == 0 {0} else {i/self.b1};
-        let b1_sum = self.block_level1[k1];
+        let b1_sum = self.block_level1.get(k1);
 
         let k2 = if self.b2 == 0 {0} else {i/self.b2};
-        let b2_sum = self.block_level2[k2];
+        let b2_sum = self.block_level2.get(k2);
 
         let scan_sum = self.bv.scan_blocks(k2*self.b2, i, Bit::ONE, u64::MAX).0;
         //println!("b1:{}, b2:{}, scan_sum: {}", b1_sum, b2_sum, scan_sum);
